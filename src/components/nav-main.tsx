@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { ChevronRightIcon } from "lucide-react";
 import {
 	Collapsible,
@@ -53,9 +54,9 @@ export function NavMain({
 									{item.items?.map((subItem) => (
 										<SidebarMenuSubItem key={subItem.title}>
 											<SidebarMenuSubButton asChild>
-												<a href={subItem.url}>
+												<Link to={subItem.url as never}>
 													<span>{subItem.title}</span>
-												</a>
+												</Link>
 											</SidebarMenuSubButton>
 										</SidebarMenuSubItem>
 									))}
