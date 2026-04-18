@@ -1,13 +1,12 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import PageHeader from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
-import { useFlowBroker } from "@/hooks/use-flow-broker";
+import { useCloudFlow } from "@/hooks/use-cloud-flow";
 import { RecentCalls } from "./-components/recent-calls";
 
 const DEFAULT_PAYLOAD = JSON.stringify({ action: "ping", data: {} }, null, 2);
@@ -17,30 +16,12 @@ export const Route = createFileRoute("/api/")({
 });
 
 function FlowBrokerTestPage() {
-	const queryClient = useQueryClient();
 	const [rawPayload, setRawPayload] = useState(DEFAULT_PAYLOAD);
 	const [parseError, setParseError] = useState<string | null>(null);
 
-	const {
-		submit,
-		isSubmitting,
-		isPolling,
-		timedOut,
-		responseCode,
-		response,
-		error,
-		reset,
-	} = useFlowBroker();
+	const { mutate, isPending, data, error, reset } = useCloudFlow();
 
-	const busy = isSubmitting || isPolling;
-	const isDone = responseCode !== null;
-
-	// Refresh the recent calls table as soon as the flow responds
-	useEffect(() => {
-		if (isDone) {
-			queryClient.invalidateQueries({ queryKey: ["recentCalls"] });
-		}
-	}, [isDone, queryClient]);
+	const isDone = data?.zap_responsecode != null;
 
 	function handleSubmit() {
 		setParseError(null);
@@ -51,13 +32,11 @@ function FlowBrokerTestPage() {
 			setParseError("Invalid JSON — fix the payload before submitting.");
 			return;
 		}
-		submit(parsed);
+		mutate(parsed);
 	}
 
-	function handleReset() {
-		reset();
-		queryClient.invalidateQueries({ queryKey: ["recentCalls"] });
-	}
+	const response = data?.zap_response ?? null;
+	const responseCode = data?.zap_responsecode ?? null;
 
 	return (
 		<div className="px-2 space-y-4">
@@ -84,7 +63,7 @@ function FlowBrokerTestPage() {
 									className="font-mono text-xs h-32 resize-none"
 									value={rawPayload}
 									onChange={(e) => setRawPayload(e.target.value)}
-									disabled={busy}
+									disabled={isPending}
 								/>
 								{parseError && (
 									<p className="text-xs text-destructive">{parseError}</p>
@@ -92,24 +71,19 @@ function FlowBrokerTestPage() {
 							</div>
 
 							<div className="flex gap-2">
-								<Button size="sm" onClick={handleSubmit} disabled={busy}>
-									{isSubmitting ? (
+								<Button size="sm" onClick={handleSubmit} disabled={isPending}>
+									{isPending ? (
 										<>
 											<Spinner className="mr-1.5 h-3 w-3" />
-											Creating…
-										</>
-									) : isPolling ? (
-										<>
-											<Spinner className="mr-1.5 h-3 w-3" />
-											Polling…
+											Submitting…
 										</>
 									) : (
 										"Trigger Flow"
 									)}
 								</Button>
 
-								{(isDone || timedOut || error) && (
-									<Button size="sm" variant="outline" onClick={handleReset}>
+								{(isDone || error) && (
+									<Button size="sm" variant="outline" onClick={reset}>
 										Reset
 									</Button>
 								)}
@@ -118,11 +92,11 @@ function FlowBrokerTestPage() {
 					</Card>
 
 					{/* Status / Response */}
-					{(busy || isDone || timedOut || error) && (
+					{(isPending || isDone || error) && (
 						<Card>
 							<CardHeader className="pb-2">
 								<CardTitle className="text-sm">
-									{error || timedOut
+									{error
 										? "Error"
 										: isDone
 											? `Response — ${responseCode}`
@@ -130,18 +104,15 @@ function FlowBrokerTestPage() {
 								</CardTitle>
 							</CardHeader>
 							<CardContent className="space-y-3">
-								{isPolling && !isDone && (
+								{isPending && (
 									<div className="flex items-center gap-2 text-xs text-muted-foreground">
 										<Spinner className="h-3 w-3" />
-										Polling every 2s…
+										Waiting for response…
 									</div>
 								)}
 
-								{(error || timedOut) && (
-									<p className="text-xs text-destructive">
-										{error?.message ??
-											"Flow did not respond within 10 seconds."}
-									</p>
+								{error && (
+									<p className="text-xs text-destructive">{error.message}</p>
 								)}
 
 								{isDone && response && (
