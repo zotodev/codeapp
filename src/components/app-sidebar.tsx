@@ -33,6 +33,10 @@ const data = {
 					title: "Create",
 					url: "/orders/create",
 				},
+				{
+					title: "API",
+					url: "/api",
+				},
 			],
 		},
 	],

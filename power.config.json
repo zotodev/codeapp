@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "appId": null,
+  "appId": "4759f7d9-81f9-4c22-bf7c-6a0319e620e2",
   "appDisplayName": "My Code App",
   "region": "prod",
   "environmentId": "025077fb-1a71-e0c4-a627-a81011a7d2d5",
@@ -16,6 +16,10 @@
         "orders": {
           "entitySetName": "zap_orders",
           "logicalName": "zap_order"
+        },
+        "cloudflowcalls": {
+          "entitySetName": "zap_cloudflowcalls",
+          "logicalName": "zap_cloudflowcall"
         }
       },
       "environmentVariableName": ""

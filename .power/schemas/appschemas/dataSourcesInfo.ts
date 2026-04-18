@@ -5,6 +5,13 @@
  */
 
 export const dataSourcesInfo = {
+  "zap_cloudflowcalls": {
+    "tableId": "",
+    "version": "",
+    "primaryKey": "zap_cloudflowcallid",
+    "dataSourceType": "Dataverse",
+    "apis": {}
+  },
   "zap_orders": {
     "tableId": "",
     "version": "",

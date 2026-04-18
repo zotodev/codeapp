@@ -5,7 +5,9 @@
 
 // Models
 export * as CommonModels from './models/CommonModels';
+export * as Zap_cloudflowcallsModel from './models/Zap_cloudflowcallsModel';
 export * as Zap_ordersModel from './models/Zap_ordersModel';
 
 // Services
+export * from './services/Zap_cloudflowcallsService';
 export * from './services/Zap_ordersService';
