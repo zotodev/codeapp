@@ -1,0 +1,252 @@
+{
+  "@odata.context": "https://org5df23d25.crm8.dynamics.com/api/data/v9.2/$metadata#EntityDefinitions('zap_order')/Attributes/Microsoft.Dynamics.CRM.StatusAttributeMetadata(OptionSet())",
+  "value": [
+    {
+      "MetadataId": "26aa480f-e308-4595-a42a-8d89af10f99c",
+      "HasChanged": null,
+      "AttributeOf": null,
+      "AttributeType": "Status",
+      "ColumnNumber": 27,
+      "DeprecatedVersion": null,
+      "IntroducedVersion": "1.0",
+      "EntityLogicalName": "zap_order",
+      "IsCustomAttribute": false,
+      "IsPrimaryId": false,
+      "IsValidODataAttribute": true,
+      "IsPrimaryName": false,
+      "IsValidForCreate": true,
+      "IsValidForRead": true,
+      "IsValidForUpdate": true,
+      "CanBeSecuredForRead": false,
+      "CanBeSecuredForCreate": false,
+      "CanBeSecuredForUpdate": false,
+      "IsSecured": false,
+      "IsRetrievable": false,
+      "IsFilterable": false,
+      "IsSearchable": false,
+      "IsManaged": false,
+      "LinkedAttributeId": null,
+      "LogicalName": "statuscode",
+      "IsValidForForm": true,
+      "IsRequiredForForm": false,
+      "IsValidForGrid": true,
+      "SchemaName": "statuscode",
+      "ExternalName": null,
+      "IsLogical": false,
+      "IsDataSourceSecret": false,
+      "InheritsFrom": null,
+      "CreatedOn": "2026-04-17T18:55:07Z",
+      "ModifiedOn": "2026-04-17T18:55:07Z",
+      "SourceType": null,
+      "AutoNumberFormat": null,
+      "DefaultFormValue": null,
+      "AttributeTypeName": {
+        "Value": "StatusType"
+      },
+      "Description": {
+        "LocalizedLabels": [
+          {
+            "Label": "Reason for the status of the Order",
+            "LanguageCode": 1033,
+            "IsManaged": false,
+            "MetadataId": "83635c02-9133-f111-88b3-7ced8daf459d",
+            "HasChanged": null
+          }
+        ],
+        "UserLocalizedLabel": {
+          "Label": "Reason for the status of the Order",
+          "LanguageCode": 1033,
+          "IsManaged": false,
+          "MetadataId": "83635c02-9133-f111-88b3-7ced8daf459d",
+          "HasChanged": null
+        }
+      },
+      "DisplayName": {
+        "LocalizedLabels": [
+          {
+            "Label": "Status Reason",
+            "LanguageCode": 1033,
+            "IsManaged": false,
+            "MetadataId": "84635c02-9133-f111-88b3-7ced8daf459d",
+            "HasChanged": null
+          }
+        ],
+        "UserLocalizedLabel": {
+          "Label": "Status Reason",
+          "LanguageCode": 1033,
+          "IsManaged": false,
+          "MetadataId": "84635c02-9133-f111-88b3-7ced8daf459d",
+          "HasChanged": null
+        }
+      },
+      "IsAuditEnabled": {
+        "Value": true,
+        "CanBeChanged": true,
+        "ManagedPropertyLogicalName": "canmodifyauditsettings"
+      },
+      "IsGlobalFilterEnabled": {
+        "Value": false,
+        "CanBeChanged": true,
+        "ManagedPropertyLogicalName": "canmodifyglobalfiltersettings"
+      },
+      "IsSortableEnabled": {
+        "Value": false,
+        "CanBeChanged": true,
+        "ManagedPropertyLogicalName": "canmodifyissortablesettings"
+      },
+      "IsCustomizable": {
+        "Value": true,
+        "CanBeChanged": true,
+        "ManagedPropertyLogicalName": "iscustomizable"
+      },
+      "IsRenameable": {
+        "Value": true,
+        "CanBeChanged": true,
+        "ManagedPropertyLogicalName": "isrenameable"
+      },
+      "IsValidForAdvancedFind": {
+        "Value": true,
+        "CanBeChanged": true,
+        "ManagedPropertyLogicalName": "canmodifysearchsettings"
+      },
+      "RequiredLevel": {
+        "Value": "None",
+        "CanBeChanged": true,
+        "ManagedPropertyLogicalName": "canmodifyrequirementlevelsettings"
+      },
+      "CanModifyAdditionalSettings": {
+        "Value": true,
+        "CanBeChanged": true,
+        "ManagedPropertyLogicalName": "canmodifyadditionalsettings"
+      },
+      "Settings": [],
+      "OptionSet": {
+        "MetadataId": "89635c02-9133-f111-88b3-7ced8daf459d",
+        "HasChanged": null,
+        "IsCustomOptionSet": true,
+        "IsGlobal": false,
+        "IsManaged": false,
+        "Name": "zap_order_statuscode",
+        "ExternalTypeName": null,
+        "OptionSetType": "Status",
+        "IntroducedVersion": "1.0",
+        "ParentOptionSetName": null,
+        "Description": {
+          "LocalizedLabels": [
+            {
+              "Label": "Reason for the status of the Order",
+              "LanguageCode": 1033,
+              "IsManaged": false,
+              "MetadataId": "8b635c02-9133-f111-88b3-7ced8daf459d",
+              "HasChanged": null
+            }
+          ],
+          "UserLocalizedLabel": {
+            "Label": "Reason for the status of the Order",
+            "LanguageCode": 1033,
+            "IsManaged": false,
+            "MetadataId": "8b635c02-9133-f111-88b3-7ced8daf459d",
+            "HasChanged": null
+          }
+        },
+        "DisplayName": {
+          "LocalizedLabels": [
+            {
+              "Label": "Status Reason",
+              "LanguageCode": 1033,
+              "IsManaged": false,
+              "MetadataId": "8a635c02-9133-f111-88b3-7ced8daf459d",
+              "HasChanged": null
+            }
+          ],
+          "UserLocalizedLabel": {
+            "Label": "Status Reason",
+            "LanguageCode": 1033,
+            "IsManaged": false,
+            "MetadataId": "8a635c02-9133-f111-88b3-7ced8daf459d",
+            "HasChanged": null
+          }
+        },
+        "IsCustomizable": {
+          "Value": true,
+          "CanBeChanged": true,
+          "ManagedPropertyLogicalName": "iscustomizable"
+        },
+        "Options": [
+          {
+            "@odata.type": "#Microsoft.Dynamics.CRM.StatusOptionMetadata",
+            "Value": 1,
+            "Color": null,
+            "IsManaged": false,
+            "ExternalValue": null,
+            "ParentValues": [],
+            "Tag": null,
+            "IsHidden": false,
+            "MetadataId": null,
+            "HasChanged": null,
+            "State": 0,
+            "TransitionData": null,
+            "Label": {
+              "LocalizedLabels": [
+                {
+                  "Label": "Active",
+                  "LanguageCode": 1033,
+                  "IsManaged": false,
+                  "MetadataId": "86635c02-9133-f111-88b3-7ced8daf459d",
+                  "HasChanged": null
+                }
+              ],
+              "UserLocalizedLabel": {
+                "Label": "Active",
+                "LanguageCode": 1033,
+                "IsManaged": false,
+                "MetadataId": "86635c02-9133-f111-88b3-7ced8daf459d",
+                "HasChanged": null
+              }
+            },
+            "Description": {
+              "LocalizedLabels": [],
+              "UserLocalizedLabel": null
+            }
+          },
+          {
+            "@odata.type": "#Microsoft.Dynamics.CRM.StatusOptionMetadata",
+            "Value": 2,
+            "Color": null,
+            "IsManaged": false,
+            "ExternalValue": null,
+            "ParentValues": [],
+            "Tag": null,
+            "IsHidden": false,
+            "MetadataId": null,
+            "HasChanged": null,
+            "State": 1,
+            "TransitionData": null,
+            "Label": {
+              "LocalizedLabels": [
+                {
+                  "Label": "Inactive",
+                  "LanguageCode": 1033,
+                  "IsManaged": false,
+                  "MetadataId": "88635c02-9133-f111-88b3-7ced8daf459d",
+                  "HasChanged": null
+                }
+              ],
+              "UserLocalizedLabel": {
+                "Label": "Inactive",
+                "LanguageCode": 1033,
+                "IsManaged": false,
+                "MetadataId": "88635c02-9133-f111-88b3-7ced8daf459d",
+                "HasChanged": null
+              }
+            },
+            "Description": {
+              "LocalizedLabels": [],
+              "UserLocalizedLabel": null
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -13,6 +13,7 @@ import { dataSourcesInfo } from "../../../.power/schemas/appschemas/dataSourcesI
 import type { IGetAllOptions, IGetOptions } from "../models/CommonModels";
 import type { Zap_orders, Zap_ordersBase } from "../models/Zap_ordersModel";
 
+//biome-ignore lint/complexity/noStaticOnlyClass: <wip
 export class Zap_ordersService {
 	private static readonly dataSourceName = "zap_orders";
 

@@ -3,8 +3,10 @@ import {
 	createRootRouteWithContext,
 	Link,
 	Outlet,
+	useLocation,
 	useRouter,
 } from "@tanstack/react-router";
+import { NuqsAdapter } from "nuqs/adapters/tanstack-router";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Header } from "@/components/Header";
 import { SidebarProvider } from "@/components/ui/sidebar";
@@ -20,25 +22,29 @@ export const Route = createRootRouteWithContext<{
 function RootLayout() {
 	return (
 		<div className="flex h-screen">
-			<SidebarProvider>
-				<AppSidebar />
-				<div className="flex min-w-0 flex-1 flex-col">
-					<Header />
-					<div className="pt-14">
-						<main className="h-full">
-							<Outlet />
-						</main>
+			<NuqsAdapter>
+				<SidebarProvider>
+					<AppSidebar />
+					<div className="flex min-w-0 flex-1 flex-col">
+						<Header />
+						<div className="pt-14">
+							<main className="h-full">
+								<Outlet />
+							</main>
+						</div>
 					</div>
-				</div>
-			</SidebarProvider>
+				</SidebarProvider>
+			</NuqsAdapter>
 		</div>
 	);
 }
 
 function NotFound() {
+	const { pathname } = useLocation();
 	return (
 		<div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center">
 			<h1 className="text-6xl font-bold">404</h1>
+			<p className="font-mono text-sm text-muted-foreground">{pathname}</p>
 			<p className="text-muted-foreground text-lg">Page not found</p>
 			<Link to="/" className="text-sm underline underline-offset-4">
 				Go home

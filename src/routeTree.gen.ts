@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as OrdersIndexRouteImport } from './routes/orders/index'
 import { Route as ApiIndexRouteImport } from './routes/api/index'
 import { Route as OrdersListRouteImport } from './routes/orders/list'
 import { Route as OrdersCreateRouteImport } from './routes/orders/create'
@@ -18,6 +19,11 @@ import { Route as OrdersOrderIdRouteImport } from './routes/orders/$orderId'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrdersIndexRoute = OrdersIndexRouteImport.update({
+  id: '/orders/',
+  path: '/orders/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiIndexRoute = ApiIndexRouteImport.update({
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/orders/create': typeof OrdersCreateRoute
   '/orders/list': typeof OrdersListRoute
   '/api/': typeof ApiIndexRoute
+  '/orders/': typeof OrdersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/orders/create': typeof OrdersCreateRoute
   '/orders/list': typeof OrdersListRoute
   '/api': typeof ApiIndexRoute
+  '/orders': typeof OrdersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,6 +70,7 @@ export interface FileRoutesById {
   '/orders/create': typeof OrdersCreateRoute
   '/orders/list': typeof OrdersListRoute
   '/api/': typeof ApiIndexRoute
+  '/orders/': typeof OrdersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -71,8 +80,15 @@ export interface FileRouteTypes {
     | '/orders/create'
     | '/orders/list'
     | '/api/'
+    | '/orders/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/orders/$orderId' | '/orders/create' | '/orders/list' | '/api'
+  to:
+    | '/'
+    | '/orders/$orderId'
+    | '/orders/create'
+    | '/orders/list'
+    | '/api'
+    | '/orders'
   id:
     | '__root__'
     | '/'
@@ -80,6 +96,7 @@ export interface FileRouteTypes {
     | '/orders/create'
     | '/orders/list'
     | '/api/'
+    | '/orders/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -88,6 +105,7 @@ export interface RootRouteChildren {
   OrdersCreateRoute: typeof OrdersCreateRoute
   OrdersListRoute: typeof OrdersListRoute
   ApiIndexRoute: typeof ApiIndexRoute
+  OrdersIndexRoute: typeof OrdersIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -97,6 +115,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/orders/': {
+      id: '/orders/'
+      path: '/orders'
+      fullPath: '/orders/'
+      preLoaderRoute: typeof OrdersIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/': {
@@ -136,6 +161,7 @@ const rootRouteChildren: RootRouteChildren = {
   OrdersCreateRoute: OrdersCreateRoute,
   OrdersListRoute: OrdersListRoute,
   ApiIndexRoute: ApiIndexRoute,
+  OrdersIndexRoute: OrdersIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

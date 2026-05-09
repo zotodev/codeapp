@@ -1,0 +1,1062 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Dataverse Schema Generator</title>
+		<style>
+			:root {
+				color-scheme: light;
+				font-family:
+					Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+					"Segoe UI", sans-serif;
+				background: #f6f7f9;
+				color: #18202a;
+			}
+
+			* {
+				box-sizing: border-box;
+			}
+
+			body {
+				margin: 0;
+				min-height: 100vh;
+			}
+
+			main {
+				width: min(1220px, calc(100vw - 32px));
+				margin: 0 auto;
+				padding: 32px 0;
+			}
+
+			header {
+				margin-bottom: 20px;
+			}
+
+			h1 {
+				margin: 0 0 6px;
+				font-size: 28px;
+				line-height: 1.2;
+				font-weight: 720;
+			}
+
+			p {
+				margin: 0;
+				color: #526170;
+				line-height: 1.5;
+			}
+
+			.panel {
+				background: #ffffff;
+				border: 1px solid #dde3ea;
+				border-radius: 8px;
+				box-shadow: 0 18px 45px rgba(24, 32, 42, 0.07);
+			}
+
+			.controls {
+				display: grid;
+				grid-template-columns: minmax(220px, 360px) auto;
+				gap: 14px;
+				align-items: end;
+				padding: 18px;
+			}
+
+			label {
+				display: grid;
+				gap: 7px;
+				font-size: 13px;
+				font-weight: 650;
+				color: #263341;
+			}
+
+			input,
+			textarea {
+				width: 100%;
+				border: 1px solid #c8d2dc;
+				border-radius: 6px;
+				padding: 10px 12px;
+				font: inherit;
+				color: #18202a;
+				background: #ffffff;
+			}
+
+			input {
+				height: 40px;
+			}
+
+			textarea {
+				min-height: 170px;
+				resize: vertical;
+				font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+			}
+
+			input:focus,
+			textarea:focus {
+				outline: 3px solid #b7d9ff;
+				border-color: #2b73c5;
+			}
+
+			button {
+				height: 40px;
+				border: 0;
+				border-radius: 6px;
+				padding: 0 16px;
+				font: inherit;
+				font-weight: 700;
+				color: #ffffff;
+				background: #245ea8;
+				cursor: pointer;
+			}
+
+			button.secondary {
+				color: #1d2a38;
+				background: #e8edf2;
+			}
+
+			button:disabled {
+				cursor: not-allowed;
+				opacity: 0.62;
+			}
+
+			.urls {
+				padding: 0 18px 18px;
+			}
+
+			.urls h2,
+			.paste-grid h2 {
+				margin: 0 0 10px;
+				font-size: 15px;
+			}
+
+			.url-list {
+				display: grid;
+				gap: 8px;
+				margin: 0;
+			}
+
+			.url-row {
+				display: grid;
+				grid-template-columns: 142px 1fr auto;
+				gap: 10px;
+				align-items: center;
+				padding: 10px;
+				border: 1px solid #dde3ea;
+				border-radius: 6px;
+				background: #f9fbfd;
+			}
+
+			.url-row dt {
+				font-size: 12px;
+				font-weight: 750;
+				color: #263341;
+			}
+
+			.url-row dd {
+				margin: 0;
+				overflow: auto;
+				white-space: nowrap;
+				font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+				color: #334252;
+			}
+
+			.paste-grid {
+				display: grid;
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+				gap: 14px;
+				padding: 18px;
+				border-top: 1px solid #dde3ea;
+			}
+
+			.paste-grid h2 {
+				grid-column: 1 / -1;
+			}
+
+			.status {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				gap: 16px;
+				padding: 12px 18px;
+				border-top: 1px solid #dde3ea;
+				color: #526170;
+				font-size: 13px;
+			}
+
+			.actions {
+				display: flex;
+				gap: 8px;
+				flex-wrap: wrap;
+			}
+
+			.output,
+			.artifact-grid {
+				margin-top: 18px;
+				overflow: hidden;
+			}
+
+			.output-head {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				gap: 16px;
+				padding: 14px 18px;
+				border-bottom: 1px solid #dde3ea;
+			}
+
+			.output-head strong {
+				font-size: 14px;
+			}
+
+			.artifact-grid {
+				display: grid;
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+				gap: 18px;
+				align-items: start;
+				overflow: visible;
+			}
+
+			.artifact-grid .output {
+				margin-top: 0;
+			}
+
+			pre {
+				margin: 0;
+				min-height: 520px;
+				max-height: 70vh;
+				overflow: auto;
+				padding: 18px;
+				background: #101820;
+				color: #d7e2ee;
+				font: 13px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+				tab-size: 2;
+				white-space: pre;
+			}
+
+			.error {
+				color: #b42318;
+			}
+
+			@media (max-width: 900px) {
+				.controls,
+				.paste-grid,
+				.artifact-grid,
+				.status,
+				.output-head,
+				.url-row {
+					display: grid;
+					grid-template-columns: 1fr;
+				}
+
+				button {
+					width: 100%;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<main>
+			<header>
+				<h1>Dataverse Schema Generator</h1>
+				<p>
+					Enter the table logical name, open the generated metadata URLs
+					yourself, paste each JSON response, then generate the app schema.
+				</p>
+			</header>
+
+			<section class="panel">
+				<form id="schemaForm">
+					<div class="controls">
+						<label>
+							Table logical name
+							<input
+								id="logicalName"
+								name="logicalName"
+								value="zap_order"
+								autocomplete="off"
+								required
+							/>
+						</label>
+						<button id="generateButton" type="submit">Generate Schema</button>
+					</div>
+
+					<div class="urls">
+						<h2>Open these URLs and paste the JSON responses below</h2>
+						<dl id="urlList" class="url-list"></dl>
+					</div>
+
+					<div class="paste-grid">
+						<h2>Pasted metadata responses</h2>
+						<label>
+							Entity definition JSON
+							<textarea
+								id="entityDefinitionJson"
+								placeholder='Paste response from EntityDefinitions(LogicalName="...") here. This one is recommended for exact entity set, primary id, and primary name.'
+							></textarea>
+						</label>
+						<label>
+							All attributes JSON
+							<textarea
+								id="attributesJson"
+								required
+								placeholder='Paste response from /Attributes here. Must include a "value" array.'
+							></textarea>
+						</label>
+						<label>
+							Picklist attributes JSON
+							<textarea
+								id="picklistJson"
+								placeholder='Paste response from /PicklistAttributeMetadata here.'
+							></textarea>
+						</label>
+						<label>
+							Status attributes JSON
+							<textarea
+								id="statusJson"
+								placeholder='Paste response from /StatusAttributeMetadata here.'
+							></textarea>
+						</label>
+						<label>
+							State attributes JSON
+							<textarea
+								id="stateJson"
+								placeholder='Paste response from /StateAttributeMetadata here.'
+							></textarea>
+						</label>
+					</div>
+				</form>
+
+				<div class="status">
+					<span id="statusText">Ready</span>
+					<div class="actions">
+						<button id="copyButton" class="secondary" type="button" disabled>
+							Copy Schema
+						</button>
+						<button id="downloadButton" class="secondary" type="button" disabled>
+							Download Schema
+						</button>
+					</div>
+				</div>
+			</section>
+
+			<section class="panel output">
+				<div class="output-head">
+					<strong>Generated schema</strong>
+					<p id="summaryText">No schema generated yet.</p>
+				</div>
+				<pre id="output">{}</pre>
+			</section>
+
+			<section class="artifact-grid">
+				<div class="panel output">
+					<div class="output-head">
+						<strong id="modelTitle">Generated model</strong>
+						<div class="actions">
+							<button id="copyModelButton" class="secondary" type="button" disabled>
+								Copy Model
+							</button>
+							<button
+								id="downloadModelButton"
+								class="secondary"
+								type="button"
+								disabled
+							>
+								Download Model
+							</button>
+						</div>
+					</div>
+					<pre id="modelOutput">// Generate a schema first.</pre>
+				</div>
+
+				<div class="panel output">
+					<div class="output-head">
+						<strong id="serviceTitle">Generated service</strong>
+						<div class="actions">
+							<button id="copyServiceButton" class="secondary" type="button" disabled>
+								Copy Service
+							</button>
+							<button
+								id="downloadServiceButton"
+								class="secondary"
+								type="button"
+								disabled
+							>
+								Download Service
+							</button>
+						</div>
+					</div>
+					<pre id="serviceOutput">// Generate a schema first.</pre>
+				</div>
+			</section>
+		</main>
+
+		<script>
+			const ORG_BASE_URL = "https://org5df23d25.crm8.dynamics.com";
+			const API_ROOT = `${ORG_BASE_URL}/api/data/v9.2`;
+
+			const form = document.querySelector("#schemaForm");
+			const logicalNameInput = document.querySelector("#logicalName");
+			const generateButton = document.querySelector("#generateButton");
+			const copyButton = document.querySelector("#copyButton");
+			const downloadButton = document.querySelector("#downloadButton");
+			const statusText = document.querySelector("#statusText");
+			const summaryText = document.querySelector("#summaryText");
+			const output = document.querySelector("#output");
+			const modelTitle = document.querySelector("#modelTitle");
+			const serviceTitle = document.querySelector("#serviceTitle");
+			const modelOutput = document.querySelector("#modelOutput");
+			const serviceOutput = document.querySelector("#serviceOutput");
+			const copyModelButton = document.querySelector("#copyModelButton");
+			const downloadModelButton = document.querySelector("#downloadModelButton");
+			const copyServiceButton = document.querySelector("#copyServiceButton");
+			const downloadServiceButton = document.querySelector("#downloadServiceButton");
+			const urlList = document.querySelector("#urlList");
+			const entityDefinitionJson = document.querySelector("#entityDefinitionJson");
+			const attributesJson = document.querySelector("#attributesJson");
+			const picklistJson = document.querySelector("#picklistJson");
+			const statusJson = document.querySelector("#statusJson");
+			const stateJson = document.querySelector("#stateJson");
+
+			let generatedJson = "";
+			let generatedModel = "";
+			let generatedService = "";
+			let generatedFileName = "schema.json";
+			let generatedModelFileName = "Model.ts";
+			let generatedServiceFileName = "Service.ts";
+
+			logicalNameInput.addEventListener("input", renderUrls);
+			form.addEventListener("submit", (event) => {
+				event.preventDefault();
+				const logicalName = logicalNameInput.value.trim();
+				if (!logicalName) return;
+
+				setBusy(true);
+				setStatus(`Parsing pasted metadata for ${logicalName}...`);
+
+				try {
+					const schema = generateDataverseSchema(logicalName);
+					const artifacts = generateTypeScriptArtifacts(schema);
+					generatedJson = JSON.stringify(schema, null, 2);
+					generatedFileName = `${logicalName}.Schema.json`;
+					generatedModel = artifacts.model;
+					generatedService = artifacts.service;
+					generatedModelFileName = `${artifacts.typeName}Model.ts`;
+					generatedServiceFileName = `${artifacts.typeName}Service.ts`;
+					output.classList.remove("error");
+					output.textContent = generatedJson;
+					modelOutput.textContent = generatedModel;
+					serviceOutput.textContent = generatedService;
+					modelTitle.textContent = generatedModelFileName;
+					serviceTitle.textContent = generatedServiceFileName;
+					copyButton.disabled = false;
+					downloadButton.disabled = false;
+					copyModelButton.disabled = false;
+					downloadModelButton.disabled = false;
+					copyServiceButton.disabled = false;
+					downloadServiceButton.disabled = false;
+					const propertyCount = Object.keys(
+						schema.schema.items.properties,
+					).length;
+					summaryText.textContent = `${propertyCount} properties generated.`;
+					setStatus("Schema, model, and service generated.");
+				} catch (error) {
+					const message =
+						error instanceof Error ? error.message : "Unknown error occurred.";
+					generatedJson = "";
+					generatedModel = "";
+					generatedService = "";
+					copyButton.disabled = true;
+					downloadButton.disabled = true;
+					copyModelButton.disabled = true;
+					downloadModelButton.disabled = true;
+					copyServiceButton.disabled = true;
+					downloadServiceButton.disabled = true;
+					output.classList.add("error");
+					output.textContent = message;
+					modelOutput.textContent = "// Generate a schema first.";
+					serviceOutput.textContent = "// Generate a schema first.";
+					summaryText.textContent = "Generation failed.";
+					setStatus("Fix the pasted JSON and submit again.");
+				} finally {
+					setBusy(false);
+				}
+			});
+
+			copyButton.addEventListener("click", async () => {
+				if (!generatedJson) return;
+				await navigator.clipboard.writeText(generatedJson);
+				setStatus("Schema JSON copied.");
+			});
+
+			downloadButton.addEventListener("click", () => {
+				if (!generatedJson) return;
+				downloadText(generatedJson, generatedFileName, "application/json");
+				setStatus("Schema download started.");
+			});
+
+			copyModelButton.addEventListener("click", async () => {
+				if (!generatedModel) return;
+				await navigator.clipboard.writeText(generatedModel);
+				setStatus("Model copied.");
+			});
+
+			downloadModelButton.addEventListener("click", () => {
+				if (!generatedModel) return;
+				downloadText(generatedModel, generatedModelFileName, "text/typescript");
+				setStatus("Model download started.");
+			});
+
+			copyServiceButton.addEventListener("click", async () => {
+				if (!generatedService) return;
+				await navigator.clipboard.writeText(generatedService);
+				setStatus("Service copied.");
+			});
+
+			downloadServiceButton.addEventListener("click", () => {
+				if (!generatedService) return;
+				downloadText(generatedService, generatedServiceFileName, "text/typescript");
+				setStatus("Service download started.");
+			});
+
+			renderUrls();
+
+			function renderUrls() {
+				const logicalName = logicalNameInput.value.trim() || "{logical_name}";
+				const urls = buildUrls(logicalName);
+				urlList.replaceChildren(
+					...urls.map(({ label, url }) => {
+						const row = document.createElement("div");
+						row.className = "url-row";
+
+						const term = document.createElement("dt");
+						term.textContent = label;
+
+						const value = document.createElement("dd");
+						value.textContent = url;
+
+						const copy = document.createElement("button");
+						copy.type = "button";
+						copy.className = "secondary";
+						copy.textContent = "Copy URL";
+						copy.addEventListener("click", async () => {
+							await navigator.clipboard.writeText(url);
+							setStatus(`${label} URL copied.`);
+						});
+
+						row.append(term, value, copy);
+						return row;
+					}),
+				);
+			}
+
+			function buildUrls(logicalName) {
+				const encodedName = encodeURIComponent(logicalName);
+				const entityDefinitionSelect = [
+					"LogicalName",
+					"DisplayName",
+					"EntitySetName",
+					"PrimaryIdAttribute",
+					"PrimaryNameAttribute",
+				].join(",");
+				const attributesSelect = [
+					"LogicalName",
+					"DisplayName",
+					"AttributeType",
+					"AttributeTypeName",
+					"RequiredLevel",
+					"IsValidForCreate",
+					"IsValidForUpdate",
+					"IsPrimaryId",
+					"IsPrimaryName",
+					"SchemaName",
+					"MaxLength",
+					"MinValue",
+					"MaxValue",
+				].join(",");
+
+				return [
+					{
+						label: "Entity definition",
+						url: `${API_ROOT}/EntityDefinitions(LogicalName='${encodedName}')?$select=${entityDefinitionSelect}`,
+					},
+					{
+						label: "All attributes",
+						url: `${API_ROOT}/EntityDefinitions(LogicalName='${encodedName}')/Attributes?$select=${attributesSelect}`,
+					},
+					{
+						label: "Picklists",
+						url: `${API_ROOT}/EntityDefinitions(LogicalName='${encodedName}')/Attributes/Microsoft.Dynamics.CRM.PicklistAttributeMetadata?$expand=OptionSet,GlobalOptionSet&$select=LogicalName,DisplayName`,
+					},
+					{
+						label: "Status",
+						url: `${API_ROOT}/EntityDefinitions(LogicalName='${encodedName}')/Attributes/Microsoft.Dynamics.CRM.StatusAttributeMetadata?$expand=OptionSet&$select=LogicalName,DisplayName`,
+					},
+					{
+						label: "State",
+						url: `${API_ROOT}/EntityDefinitions(LogicalName='${encodedName}')/Attributes/Microsoft.Dynamics.CRM.StateAttributeMetadata?$expand=OptionSet&$select=LogicalName,DisplayName`,
+					},
+				];
+			}
+
+			function generateDataverseSchema(logicalName) {
+				const entityDefinition = parseObject(
+					entityDefinitionJson.value,
+					"Entity definition JSON",
+					false,
+				) || {
+					LogicalName: logicalName,
+					DisplayName: null,
+					EntitySetName: `${logicalName}s`,
+					PrimaryIdAttribute: `${logicalName}id`,
+					PrimaryNameAttribute: null,
+				};
+				const attributes = parseValueArray(
+					attributesJson.value,
+					"All attributes JSON",
+					true,
+				);
+				const picklistAttributes = parseValueArray(
+					picklistJson.value,
+					"Picklist attributes JSON",
+					false,
+				);
+				const statusAttributes = parseValueArray(
+					statusJson.value,
+					"Status attributes JSON",
+					false,
+				);
+				const stateAttributes = parseValueArray(
+					stateJson.value,
+					"State attributes JSON",
+					false,
+				);
+
+				const optionMetadata = new Map();
+				for (const attribute of [
+					...picklistAttributes,
+					...statusAttributes,
+					...stateAttributes,
+				]) {
+					if (attribute?.LogicalName) optionMetadata.set(attribute.LogicalName, attribute);
+				}
+
+				const properties = {};
+				const required = [];
+
+				for (const attribute of attributes) {
+					const attributeLogicalName = attribute?.LogicalName;
+					if (!attributeLogicalName) continue;
+
+					const property = buildProperty(
+						attribute,
+						optionMetadata.get(attributeLogicalName),
+						entityDefinition,
+					);
+					properties[attributeLogicalName] = property;
+					if (property.required) required.push(attributeLogicalName);
+				}
+
+				required.sort();
+
+				return {
+					name: entityDefinition.LogicalName || logicalName,
+					title: getLabel(entityDefinition.DisplayName) || toTitle(logicalName),
+					schema: {
+						type: "array",
+						items: {
+							type: "object",
+							"x-ms-dataverse-entity": true,
+							"x-ms-dataverse-entityset":
+								entityDefinition.EntitySetName || `${logicalName}s`,
+							"x-ms-dataverse-primary-id":
+								entityDefinition.PrimaryIdAttribute || `${logicalName}id`,
+							"x-ms-dataverse-primary-name":
+								entityDefinition.PrimaryNameAttribute || null,
+							properties,
+							required,
+						},
+					},
+				};
+			}
+
+			function parseObject(rawValue, label, required) {
+				const trimmed = rawValue.trim();
+				if (!trimmed) {
+					if (required) throw new Error(`${label} is required.`);
+					return null;
+				}
+
+				const parsed = parseJson(trimmed, label);
+				if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") {
+					throw new Error(`${label} must be a JSON object.`);
+				}
+				return parsed;
+			}
+
+			function parseValueArray(rawValue, label, required) {
+				const trimmed = rawValue.trim();
+				if (!trimmed) {
+					if (required) throw new Error(`${label} is required.`);
+					return [];
+				}
+
+				const parsed = parseJson(trimmed, label);
+				if (Array.isArray(parsed)) return parsed;
+				if (Array.isArray(parsed?.value)) return parsed.value;
+				throw new Error(`${label} must be a JSON array or an object with a value array.`);
+			}
+
+			function parseJson(rawValue, label) {
+				try {
+					return JSON.parse(rawValue);
+				} catch (error) {
+					const message = error instanceof Error ? error.message : "Invalid JSON";
+					throw new Error(`${label} is not valid JSON: ${message}`);
+				}
+			}
+
+			function generateTypeScriptArtifacts(schema) {
+				const items = schema.schema.items;
+				const properties = items.properties || {};
+				const required = new Set(items.required || []);
+				const entitySetName =
+					items["x-ms-dataverse-entityset"] || `${schema.name || "Entity"}s`;
+				const primaryId = items["x-ms-dataverse-primary-id"];
+				const typeName = toTypeName(entitySetName);
+				const enumProperties = Object.entries(properties).filter(([, property]) =>
+					Array.isArray(property.enum),
+				);
+				const baseProperties = Object.entries(properties).filter(([, property]) =>
+					isBaseProperty(property),
+				);
+				const readProperties = Object.entries(properties).filter(
+					([name, property]) => !isBaseProperty(property) && !isLookupProperty(property),
+				);
+				const lookupProperties = Object.entries(properties).filter(([, property]) =>
+					isLookupProperty(property),
+				);
+
+				return {
+					typeName,
+					model: generateModelFile({
+						typeName,
+						enumProperties,
+						baseProperties,
+						readProperties,
+						lookupProperties,
+						required,
+					}),
+					service: generateServiceFile({ typeName, entitySetName, primaryId }),
+				};
+			}
+
+			function generateModelFile({
+				typeName,
+				enumProperties,
+				baseProperties,
+				readProperties,
+				lookupProperties,
+				required,
+			}) {
+				const lines = [headerComment()];
+
+				for (const [name, property] of enumProperties) {
+					const enumName = `${typeName}${name}`;
+					lines.push(`export const ${enumName} = {`);
+					const values = property["x-ms-enum-values"] || [];
+					const labels = property.enum || [];
+					for (let index = 0; index < values.length; index += 1) {
+						const comma = index === values.length - 1 ? "" : ",";
+						lines.push(
+							`  ${formatObjectKey(values[index])}: '${escapeSingleQuote(
+								labels[index] ?? String(values[index]),
+							)}'${comma}`,
+						);
+					}
+					lines.push(`} as const;`);
+					lines.push(`export type ${enumName} = keyof typeof ${enumName};`);
+				}
+
+				if (enumProperties.length > 0) lines.push("");
+
+				lines.push(`export interface ${typeName}Base {`);
+				for (const [name, property] of baseProperties) {
+					lines.push(
+						`  ${name}${required.has(name) || property.required ? "" : "?"}: ${toTsType(
+							name,
+							property,
+							typeName,
+						)};`,
+					);
+				}
+				lines.push("}");
+				lines.push("");
+				lines.push(`export interface ${typeName} extends ${typeName}Base {`);
+				for (const [name, property] of readProperties) {
+					lines.push(
+						`  ${name}${required.has(name) || property.required ? "" : "?"}: ${toTsType(
+							name,
+							property,
+							typeName,
+						)};`,
+					);
+				}
+				for (const [name] of lookupProperties) {
+					lines.push(`  ${name}?: object;`);
+					lines.push(`  _${name}_value?: string;`);
+				}
+				lines.push("}");
+
+				return `${lines.join("\n")}\n`;
+			}
+
+			function generateServiceFile({ typeName, entitySetName, primaryId }) {
+				return `${headerComment()}
+
+import type { IOperationResult } from "@microsoft/power-apps/data";
+import { getClient } from "@microsoft/power-apps/data";
+import type {
+\tEntityMetadata,
+\tGetEntityMetadataOptions,
+} from "@microsoft/power-apps/data/metadata/dataverse";
+import { dataSourcesInfo } from "../../../.power/schemas/appschemas/dataSourcesInfo";
+import type { IGetAllOptions, IGetOptions } from "../models/CommonModels";
+import type { ${typeName}, ${typeName}Base } from "../models/${typeName}Model";
+
+//biome-ignore lint/complexity/noStaticOnlyClass: <wip
+export class ${typeName}Service {
+\tprivate static readonly dataSourceName = "${entitySetName}";
+
+\tprivate static readonly client = getClient(dataSourcesInfo);
+
+\tpublic static async create(
+\t\trecord: Omit<${typeName}Base, "${primaryId}">,
+\t): Promise<IOperationResult<${typeName}>> {
+\t\tconst result = await ${typeName}Service.client.createRecordAsync<
+\t\t\tOmit<${typeName}Base, "${primaryId}">,
+\t\t\t${typeName}
+\t\t>(${typeName}Service.dataSourceName, record);
+\t\treturn result;
+\t}
+
+\tpublic static async update(
+\t\tid: string,
+\t\tchangedFields: Partial<Omit<${typeName}Base, "${primaryId}">>,
+\t): Promise<IOperationResult<${typeName}>> {
+\t\tconst result = await ${typeName}Service.client.updateRecordAsync<
+\t\t\tPartial<Omit<${typeName}Base, "${primaryId}">>,
+\t\t\t${typeName}
+\t\t>(${typeName}Service.dataSourceName, id, changedFields);
+\t\treturn result;
+\t}
+
+\tpublic static async delete(id: string): Promise<void> {
+\t\tawait ${typeName}Service.client.deleteRecordAsync(
+\t\t\t${typeName}Service.dataSourceName,
+\t\t\tid,
+\t\t);
+\t}
+
+\tpublic static async get(
+\t\tid: string,
+\t\toptions?: IGetOptions,
+\t): Promise<IOperationResult<${typeName}>> {
+\t\tconst result =
+\t\t\tawait ${typeName}Service.client.retrieveRecordAsync<${typeName}>(
+\t\t\t\t${typeName}Service.dataSourceName,
+\t\t\t\tid,
+\t\t\t\toptions,
+\t\t\t);
+\t\treturn result;
+\t}
+
+\tpublic static async getAll(
+\t\toptions?: IGetAllOptions,
+\t): Promise<IOperationResult<${typeName}[]>> {
+\t\tconst result =
+\t\t\tawait ${typeName}Service.client.retrieveMultipleRecordsAsync<${typeName}>(
+\t\t\t\t${typeName}Service.dataSourceName,
+\t\t\t\toptions,
+\t\t\t);
+\t\treturn result;
+\t}
+
+\tpublic static getMetadata(
+\t\toptions: GetEntityMetadataOptions<${typeName}> = {},
+\t): Promise<IOperationResult<Partial<EntityMetadata>>> {
+\t\treturn ${typeName}Service.client.executeAsync({
+\t\t\tdataverseRequest: {
+\t\t\t\taction: "getEntityMetadata",
+\t\t\t\tparameters: {
+\t\t\t\t\ttableName: ${typeName}Service.dataSourceName,
+\t\t\t\t\toptions: options as GetEntityMetadataOptions,
+\t\t\t\t},
+\t\t\t},
+\t\t});
+\t}
+}
+`;
+			}
+
+			function isBaseProperty(property) {
+				return !property["x-ms-read-only"] && !isLookupProperty(property);
+			}
+
+			function isLookupProperty(property) {
+				return property["x-ms-dataverse-type"] === "LookupType";
+			}
+
+			function toTsType(name, property, typeName) {
+				if (Array.isArray(property.enum)) return `${typeName}${name}`;
+
+				switch (property["x-ms-dataverse-type"]) {
+					case "BigIntType":
+					case "DecimalType":
+					case "DoubleType":
+					case "IntegerType":
+					case "MoneyType":
+						return "number";
+					case "BooleanType":
+						return "boolean";
+					default:
+						return "string";
+				}
+			}
+
+			function toTypeName(value) {
+				const safeValue = String(value || "Entity").replace(/[^a-zA-Z0-9_]/g, "_");
+				return `${safeValue.charAt(0).toUpperCase()}${safeValue.slice(1)}`;
+			}
+
+			function escapeSingleQuote(value) {
+				return String(value).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+			}
+
+			function formatObjectKey(value) {
+				if (typeof value === "number" && Number.isFinite(value)) return String(value);
+				if (/^[A-Za-z_$][\w$]*$/.test(String(value))) return String(value);
+				return JSON.stringify(String(value));
+			}
+
+			function headerComment() {
+				return `/*!
+ * Copyright (C) Microsoft Corporation. All rights reserved.
+ * This file is autogenerated. Do not edit this file directly.
+ */`;
+			}
+
+			function downloadText(text, fileName, type) {
+				const blob = new Blob([text], { type });
+				const url = URL.createObjectURL(blob);
+				const anchor = document.createElement("a");
+				anchor.href = url;
+				anchor.download = fileName;
+				anchor.click();
+				URL.revokeObjectURL(url);
+			}
+
+			function buildProperty(attribute, optionAttribute, entityDefinition) {
+				const dataverseType =
+					attribute.AttributeTypeName?.Value ||
+					`${attribute.AttributeType || "String"}Type`;
+				const property = {
+					type: "string",
+					title: getLabel(attribute.DisplayName) || attribute.LogicalName,
+					"x-ms-dataverse-attribute": attribute.LogicalName,
+					"x-ms-dataverse-type": dataverseType,
+					"x-ms-schema-name": attribute.SchemaName || attribute.LogicalName,
+				};
+
+				if (
+					attribute.IsValidForCreate === false &&
+					attribute.IsValidForUpdate === false
+				) {
+					property["x-ms-read-only"] = true;
+				}
+
+				if (isRequired(attribute)) {
+					property.required = true;
+				}
+
+				if (Number.isFinite(attribute.MaxLength)) {
+					property.maxLength = attribute.MaxLength;
+				}
+
+				if (Number.isFinite(attribute.MinValue)) {
+					property.minimum = attribute.MinValue;
+				}
+
+				if (Number.isFinite(attribute.MaxValue)) {
+					property.maximum = attribute.MaxValue;
+				}
+
+				if (attribute.IsPrimaryName) {
+					property["x-ms-dataverse-primary-name"] = true;
+				}
+
+				if (
+					attribute.IsPrimaryId ||
+					attribute.LogicalName === entityDefinition.PrimaryIdAttribute
+				) {
+					property["x-ms-dataverse-primary-id"] = true;
+					property.required = true;
+					property["x-ms-keyType"] = "primary";
+				}
+
+				if (optionAttribute) {
+					applyOptionSet(property, optionAttribute);
+				}
+
+				return property;
+			}
+
+			function applyOptionSet(property, optionAttribute) {
+				const optionSet = optionAttribute.OptionSet || optionAttribute.GlobalOptionSet;
+				const options = optionSet?.Options || [];
+
+				property.enum = options.map((option) => getLabel(option.Label));
+				property["x-ms-enum-values"] = options.map((option) => option.Value);
+				property.Color = options.map((option) => option.Color ?? null);
+
+				if (optionSet?.MetadataId) {
+					property["x-ms-optionsetmetadataid"] = optionSet.MetadataId;
+				}
+
+				property["x-ms-isGlobal"] = Boolean(optionAttribute.GlobalOptionSet);
+				property["x-ms-optionsetdisplayname"] =
+					getLabel(optionSet?.DisplayName) || property.title;
+
+				if (optionSet?.OptionSetType) {
+					property["x-ms-optionSetType"] = optionSet.OptionSetType;
+				}
+			}
+
+			function isRequired(attribute) {
+				const value = attribute.RequiredLevel?.Value || attribute.RequiredLevel;
+				return value === "SystemRequired" || value === "ApplicationRequired";
+			}
+
+			function getLabel(labelContainer) {
+				return (
+					labelContainer?.UserLocalizedLabel?.Label ||
+					labelContainer?.LocalizedLabels?.[0]?.Label ||
+					""
+				);
+			}
+
+			function toTitle(value) {
+				return value
+					.replace(/_/g, " ")
+					.replace(/\b\w/g, (letter) => letter.toUpperCase());
+			}
+
+			function setBusy(isBusy) {
+				generateButton.disabled = isBusy;
+				generateButton.textContent = isBusy ? "Generating..." : "Generate Schema";
+			}
+
+			function setStatus(message) {
+				statusText.textContent = message;
+			}
+		</script>
+	</body>
+</html>

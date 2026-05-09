@@ -1,6 +1,6 @@
 {
   "name": "zap_order",
-  "title": "Orders",
+  "title": "Order",
   "schema": {
     "type": "array",
     "items": {
@@ -77,7 +77,9 @@
           "title": "Import Sequence Number",
           "x-ms-dataverse-attribute": "importsequencenumber",
           "x-ms-dataverse-type": "IntegerType",
-          "x-ms-schema-name": "ImportSequenceNumber"
+          "x-ms-schema-name": "ImportSequenceNumber",
+          "minimum": -2147483648,
+          "maximum": 2147483647
         },
         "modifiedby": {
           "type": "string",
@@ -268,14 +270,18 @@
           "title": "Time Zone Rule Version Number",
           "x-ms-dataverse-attribute": "timezoneruleversionnumber",
           "x-ms-dataverse-type": "IntegerType",
-          "x-ms-schema-name": "TimeZoneRuleVersionNumber"
+          "x-ms-schema-name": "TimeZoneRuleVersionNumber",
+          "minimum": -1,
+          "maximum": 2147483647
         },
         "utcconversiontimezonecode": {
           "type": "string",
           "title": "UTC Conversion Time Zone Code",
           "x-ms-dataverse-attribute": "utcconversiontimezonecode",
           "x-ms-dataverse-type": "IntegerType",
-          "x-ms-schema-name": "UTCConversionTimeZoneCode"
+          "x-ms-schema-name": "UTCConversionTimeZoneCode",
+          "minimum": -1,
+          "maximum": 2147483647
         },
         "versionnumber": {
           "type": "string",
@@ -283,7 +289,9 @@
           "x-ms-dataverse-attribute": "versionnumber",
           "x-ms-dataverse-type": "BigIntType",
           "x-ms-schema-name": "VersionNumber",
-          "x-ms-read-only": true
+          "x-ms-read-only": true,
+          "minimum": -9223372036854776000,
+          "maximum": 9223372036854776000
         },
         "zap_address": {
           "type": "string",
@@ -300,8 +308,8 @@
           "x-ms-dataverse-attribute": "zap_id",
           "x-ms-dataverse-type": "StringType",
           "x-ms-schema-name": "zap_ID",
-          "x-ms-dataverse-primary-name": true,
-          "maxLength": 850
+          "maxLength": 850,
+          "x-ms-dataverse-primary-name": true
         },
         "zap_orderid": {
           "type": "string",
@@ -309,8 +317,8 @@
           "x-ms-dataverse-attribute": "zap_orderid",
           "x-ms-dataverse-type": "UniqueidentifierType",
           "x-ms-schema-name": "zap_OrderId",
-          "x-ms-dataverse-primary-id": true,
           "required": true,
+          "x-ms-dataverse-primary-id": true,
           "x-ms-keyType": "primary"
         }
       },

@@ -1,4 +1,8 @@
-import { createRouter, RouterProvider } from "@tanstack/react-router";
+import {
+	createHashHistory,
+	createRouter,
+	RouterProvider,
+} from "@tanstack/react-router";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { queryClient } from "./lib/queryClient";
@@ -8,6 +12,7 @@ import "./index.css";
 
 const router = createRouter({
 	routeTree,
+	history: createHashHistory(),
 	context: {
 		queryClient,
 	},
