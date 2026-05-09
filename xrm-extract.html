@@ -1,0 +1,1179 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Code App Artefacts Generator</title>
+		<style>
+			:root {
+				color-scheme: light;
+				font-family:
+					Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+					"Segoe UI", sans-serif;
+				background: #f6f7f9;
+				color: #18202a;
+			}
+
+			* {
+				box-sizing: border-box;
+			}
+
+			body {
+				margin: 0;
+				min-height: 100vh;
+				background: #f6f7f9;
+			}
+
+			main {
+				width: 100%;
+				min-height: 100vh;
+				display: grid;
+				grid-template-columns: minmax(280px, 20vw) 1fr;
+				gap: 0;
+			}
+
+			.sidebar {
+				min-height: 100vh;
+				padding: 24px;
+				background: #ffffff;
+				border-right: 1px solid #dde3ea;
+				position: sticky;
+				top: 0;
+				align-self: start;
+			}
+
+			h1 {
+				margin: 0 0 6px;
+				font-size: 20px;
+				line-height: 1.2;
+				font-weight: 720;
+			}
+
+			p {
+				margin: 0;
+				color: #526170;
+				line-height: 1.5;
+			}
+
+			.info-card {
+				margin-bottom: 22px;
+				padding: 12px;
+				border: 1px solid #dde3ea;
+				border-radius: 8px;
+				background: #f9fbfd;
+			}
+
+			.info-card strong {
+				display: block;
+				margin-bottom: 4px;
+				font-size: 13px;
+				color: #1d2a38;
+			}
+
+			.info-card p {
+				font-size: 12px;
+			}
+
+			form {
+				display: grid;
+				gap: 16px;
+			}
+
+			.mode-row {
+				display: grid;
+				gap: 8px;
+			}
+
+			.mode-row label {
+				display: inline-flex;
+				align-items: center;
+				gap: 8px;
+				min-height: 38px;
+				padding: 0 10px;
+				border: 1px solid #c8d2dc;
+				border-radius: 6px;
+				background: #f9fbfd;
+				font-size: 13px;
+				font-weight: 700;
+			}
+
+			.input-row {
+				display: grid;
+				gap: 12px;
+			}
+
+			.field {
+				display: grid;
+				gap: 7px;
+				font-size: 13px;
+				font-weight: 650;
+				color: #263341;
+			}
+
+			input[type="text"] {
+				width: 100%;
+				height: 40px;
+				border: 1px solid #c8d2dc;
+				border-radius: 6px;
+				padding: 0 12px;
+				font: inherit;
+				color: #18202a;
+				background: #ffffff;
+			}
+
+			input[type="text"]:focus {
+				outline: 3px solid #b7d9ff;
+				border-color: #2b73c5;
+			}
+
+			button {
+				height: 40px;
+				border: 0;
+				border-radius: 6px;
+				padding: 0 16px;
+				font: inherit;
+				font-weight: 700;
+				color: #ffffff;
+				background: #245ea8;
+				cursor: pointer;
+			}
+
+			button.icon {
+				width: 32px;
+				height: 32px;
+				display: inline-grid;
+				place-items: center;
+				padding: 0;
+				color: #1d2a38;
+				background: #eef2f6;
+			}
+
+			button.secondary {
+				color: #1d2a38;
+				background: #e8edf2;
+			}
+
+			button:disabled {
+				cursor: not-allowed;
+				opacity: 0.62;
+			}
+
+			.status {
+				display: grid;
+				gap: 8px;
+				margin-top: 18px;
+				color: #526170;
+				font-size: 13px;
+			}
+
+			.actions {
+				display: grid;
+				gap: 8px;
+			}
+
+			.workspace {
+				min-width: 0;
+				padding: 24px;
+			}
+
+			.workspace-head {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				gap: 16px;
+				margin-bottom: 16px;
+			}
+
+			.workspace-title {
+				display: grid;
+				gap: 4px;
+			}
+
+			.workspace-title strong {
+				font-size: 18px;
+			}
+
+			.panel {
+				background: #ffffff;
+				border: 1px solid #dde3ea;
+				border-radius: 8px;
+				overflow: hidden;
+			}
+
+			details.file-tree {
+				margin-bottom: 16px;
+			}
+
+			details.file-tree summary {
+				cursor: pointer;
+				padding: 14px 16px;
+				font-weight: 750;
+				border-bottom: 1px solid #dde3ea;
+			}
+
+			.tree-body {
+				padding: 12px 16px 16px;
+				font: 12px/1.7 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+				color: #334252;
+				overflow: auto;
+			}
+
+			.tree-group {
+				margin-bottom: 10px;
+			}
+
+			.tree-folder {
+				font-weight: 750;
+				color: #1d2a38;
+			}
+
+			.tree-file {
+				padding-left: 18px;
+				white-space: nowrap;
+			}
+
+			.artifact-list {
+				display: grid;
+				gap: 16px;
+			}
+
+			.artifact-card {
+				background: #ffffff;
+				border: 1px solid #dde3ea;
+				border-radius: 8px;
+				overflow: hidden;
+			}
+
+			.artifact-head {
+				display: grid;
+				grid-template-columns: minmax(0, 1fr) auto;
+				gap: 12px;
+				align-items: center;
+				padding: 12px 14px;
+				border-bottom: 1px solid #dde3ea;
+			}
+
+			.file-path {
+				margin: 0;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+				color: #1d2a38;
+			}
+
+			pre {
+				margin: 0;
+				max-height: 520px;
+				overflow: auto;
+				padding: 16px;
+				background: #101820;
+				color: #d7e2ee;
+				font: 13px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+				tab-size: 2;
+				white-space: pre;
+			}
+
+			.empty-state {
+				min-height: 360px;
+				display: grid;
+				place-items: center;
+				padding: 32px;
+				text-align: center;
+				color: #526170;
+			}
+
+			.toast {
+				position: fixed;
+				right: 24px;
+				bottom: 24px;
+				z-index: 20;
+				min-width: 180px;
+				padding: 10px 12px;
+				border-radius: 6px;
+				background: #18202a;
+				color: #ffffff;
+				font-size: 13px;
+				box-shadow: 0 14px 36px rgba(24, 32, 42, 0.22);
+				opacity: 0;
+				transform: translateY(8px);
+				pointer-events: none;
+				transition:
+					opacity 160ms ease,
+					transform 160ms ease;
+			}
+
+			.toast.visible {
+				opacity: 1;
+				transform: translateY(0);
+			}
+
+			.error {
+				color: #b42318;
+			}
+
+			@media (max-width: 900px) {
+				main {
+					display: grid;
+					grid-template-columns: 1fr;
+				}
+
+				.sidebar {
+					min-height: auto;
+					position: static;
+					border-right: 0;
+					border-bottom: 1px solid #dde3ea;
+				}
+
+				.workspace-head,
+				.artifact-head {
+					grid-template-columns: 1fr;
+					display: grid;
+				}
+
+				button {
+					width: 100%;
+				}
+
+				button.icon {
+					width: 100%;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<main>
+			<aside class="sidebar">
+				<h1>Code App Artefacts Generator</h1>
+				<div class="info-card">
+					<strong id="infoTitle">Table extraction</strong>
+					<p id="infoText">
+						Enter one Dataverse table logical name to generate its schema, model,
+						and service files.
+					</p>
+				</div>
+
+				<form id="extractForm">
+					<div class="mode-row" role="radiogroup" aria-label="Extraction mode">
+						<label>
+							<input type="radio" name="mode" value="table" checked />
+							Table logical name
+						</label>
+						<label>
+							<input type="radio" name="mode" value="solution" />
+							Solution name
+						</label>
+					</div>
+
+					<div class="input-row">
+						<label class="field">
+							<span id="inputLabel">Table logical name</span>
+							<input
+								id="extractInput"
+								type="text"
+								autocomplete="off"
+								required
+							/>
+						</label>
+						<button id="extractButton" type="submit">Extract Artifacts</button>
+					</div>
+				</form>
+
+				<div class="status">
+					<span id="statusText"></span>
+					<div class="actions">
+						<button id="bulkDownloadButton" class="secondary" type="button" disabled>
+							Bulk Download
+						</button>
+					</div>
+				</div>
+			</aside>
+
+			<section class="workspace">
+				<div class="workspace-head">
+					<div class="workspace-title">
+						<strong>Generated Artifacts</strong>
+						<p id="summaryText">No artifacts generated yet.</p>
+					</div>
+				</div>
+
+				<details id="fileTreePanel" class="panel file-tree">
+					<summary>File structure</summary>
+					<div id="fileTree" class="tree-body">Generate artifacts to preview the project structure.</div>
+				</details>
+
+				<div id="artifactList" class="artifact-list">
+					<div class="panel empty-state">
+						<p>Extract a table or solution to preview each generated file here.</p>
+					</div>
+				</div>
+			</section>
+		</main>
+		<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+		<script>
+			const API_VERSION = "v9.2";
+			const extractForm = document.querySelector("#extractForm");
+			const extractInput = document.querySelector("#extractInput");
+			const extractButton = document.querySelector("#extractButton");
+			const inputLabel = document.querySelector("#inputLabel");
+			const infoTitle = document.querySelector("#infoTitle");
+			const infoText = document.querySelector("#infoText");
+			const statusText = document.querySelector("#statusText");
+			const summaryText = document.querySelector("#summaryText");
+			const fileTree = document.querySelector("#fileTree");
+			const fileTreePanel = document.querySelector("#fileTreePanel");
+			const artifactList = document.querySelector("#artifactList");
+			const bulkDownloadButton = document.querySelector("#bulkDownloadButton");
+			const toast = document.querySelector("#toast");
+			const modeInputs = [...document.querySelectorAll("input[name='mode']")];
+
+			let generatedBundle = "";
+			let generatedFileName = "dataverse-artifacts.json";
+			let generatedFiles = [];
+			let toastTimer = 0;
+
+			modeInputs.forEach((input) => input.addEventListener("change", syncMode));
+			extractForm.addEventListener("submit", handleExtract);
+			bulkDownloadButton.addEventListener("click", () => {
+				if (!generatedBundle) return;
+				downloadText(generatedBundle, generatedFileName, "application/json");
+				showToast("Bundle download started");
+			});
+			artifactList.addEventListener("click", async (event) => {
+				const button = event.target.closest("[data-copy-index]");
+				if (!button) return;
+				const file = generatedFiles[Number(button.dataset.copyIndex)];
+				if (!file) return;
+				await navigator.clipboard.writeText(file.content);
+				showToast("File copied");
+			});
+
+			syncMode();
+
+			function syncMode() {
+				const mode = getMode();
+				if (mode === "solution") {
+					inputLabel.textContent = "Solution unique name or display name";
+					extractInput.placeholder = "Example: MySolution";
+					infoTitle.textContent = "Solution extraction";
+					infoText.textContent =
+						"The generator will find tables in the solution and create schema, model, and service files for each table.";
+					return;
+				}
+
+				inputLabel.textContent = "Table logical name";
+				extractInput.placeholder = "Example: zap_order";
+				infoTitle.textContent = "Table extraction";
+				infoText.textContent =
+					"Enter one Dataverse table logical name to generate its schema, model, and service files.";
+			}
+
+			async function handleExtract(event) {
+				event.preventDefault();
+				const mode = getMode();
+				const value = extractInput.value.trim();
+				if (!value) return;
+
+				setBusy(true);
+				setStatus(mode === "solution" ? "Resolving solution..." : "Reading table metadata...");
+				artifactList.classList.remove("error");
+
+				try {
+					const bundle =
+						mode === "solution"
+							? await extractSolutionArtifacts(value)
+							: await extractSingleTableArtifacts(value);
+					generatedBundle = JSON.stringify(bundle, null, 2);
+					generatedFileName =
+						mode === "solution"
+							? `${sanitizeFileName(value)}.dataverse-artifacts.json`
+							: `${sanitizeFileName(value)}.dataverse-artifacts.json`;
+					generatedFiles = bundle.files;
+					renderArtifacts(bundle);
+					bulkDownloadButton.disabled = false;
+					summaryText.textContent = `${bundle.files.length} files for ${bundle.tables.length} table(s).`;
+					setStatus("Artifacts generated.");
+				} catch (error) {
+					const message =
+						error instanceof Error ? error.message : "Unknown error occurred.";
+					generatedBundle = "";
+					generatedFiles = [];
+					bulkDownloadButton.disabled = true;
+					renderError(message);
+					summaryText.textContent = "Extraction failed.";
+					setStatus("Fix the input or context and try again.");
+				} finally {
+					setBusy(false);
+				}
+			}
+
+			async function extractSingleTableArtifacts(logicalName) {
+				const schema = await fetchTableSchema(logicalName);
+				return buildBundle([schema], `table:${logicalName}`);
+			}
+
+			async function extractSolutionArtifacts(solutionName) {
+				const solution = await findSolution(solutionName);
+				setStatus(`Reading table components from ${solution.uniquename || solution.friendlyname}...`);
+				const components = await fetchAll(
+					`solutioncomponents?$select=objectid,componenttype&$filter=_solutionid_value eq ${stripBraces(
+						solution.solutionid,
+					)} and componenttype eq 1`,
+				);
+				const metadataIds = [
+					...new Set(
+						components
+							.map((component) => stripBraces(component.objectid))
+							.filter(Boolean),
+					),
+				];
+				if (metadataIds.length === 0) {
+					throw new Error("No table components were found in that solution.");
+				}
+
+				const schemas = [];
+				for (let index = 0; index < metadataIds.length; index += 1) {
+					setStatus(`Reading table ${index + 1} of ${metadataIds.length}...`);
+					const definition = await fetchEntityDefinitionByMetadataId(metadataIds[index]);
+					schemas.push(await fetchTableSchema(definition.LogicalName, definition));
+				}
+
+				return buildBundle(schemas, `solution:${solution.uniquename || solutionName}`);
+			}
+
+			function buildBundle(schemas, source) {
+				const files = [];
+				for (const schema of schemas) {
+					const artifacts = generateTypeScriptArtifacts(schema);
+					files.push({
+						path: `.power/schemas/dataverse/${schema.name}.Schema.json`,
+						content: JSON.stringify(schema, null, 2),
+					});
+					files.push({
+						path: `src/generated/models/${artifacts.typeName}Model.ts`,
+						content: artifacts.model,
+					});
+					files.push({
+						path: `src/generated/services/${artifacts.typeName}Service.ts`,
+						content: artifacts.service,
+					});
+				}
+
+				return {
+					source,
+					generatedAt: new Date().toISOString(),
+					tables: schemas.map((schema) => ({
+						logicalName: schema.name,
+						entitySetName: schema.schema.items["x-ms-dataverse-entityset"],
+						primaryId: schema.schema.items["x-ms-dataverse-primary-id"],
+					})),
+					files,
+				};
+			}
+
+			function renderArtifacts(bundle) {
+				fileTreePanel.open = false;
+				fileTree.innerHTML = renderFileTree(bundle.files);
+				artifactList.replaceChildren(
+					...bundle.files.map((file, index) => {
+						const card = document.createElement("article");
+						card.className = "artifact-card";
+
+						const head = document.createElement("div");
+						head.className = "artifact-head";
+
+						const path = document.createElement("p");
+						path.className = "file-path";
+						path.title = file.path;
+						path.textContent = file.path;
+
+						const copy = document.createElement("button");
+						copy.type = "button";
+						copy.className = "icon";
+						copy.dataset.copyIndex = String(index);
+						copy.title = "Copy file";
+						copy.setAttribute("aria-label", `Copy ${file.path}`);
+						copy.innerHTML =
+							'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="9" width="10" height="10" rx="2" stroke="currentColor" stroke-width="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2"></path></svg>';
+
+						const pre = document.createElement("pre");
+						const code = document.createElement("code");
+						code.textContent = file.content;
+						pre.append(code);
+
+						head.append(path, copy);
+						card.append(head, pre);
+						return card;
+					}),
+				);
+			}
+
+			function renderFileTree(files) {
+				const groups = new Map();
+				for (const file of files) {
+					const parts = file.path.split("/");
+					const fileName = parts.pop();
+					const folder = parts.join("/") || ".";
+					if (!groups.has(folder)) groups.set(folder, []);
+					groups.get(folder).push(fileName);
+				}
+
+				return [...groups.entries()]
+					.sort(([left], [right]) => left.localeCompare(right))
+					.map(([folder, names]) => {
+						const filesHtml = names
+							.sort((left, right) => left.localeCompare(right))
+							.map((name) => `<div class="tree-file">${escapeHtml(name)}</div>`)
+							.join("");
+						return `<div class="tree-group"><div class="tree-folder">${escapeHtml(
+							folder,
+						)}/</div>${filesHtml}</div>`;
+					})
+					.join("");
+			}
+
+			function renderError(message) {
+				fileTree.textContent = "Generate artifacts to preview the project structure.";
+				artifactList.replaceChildren();
+				const errorPanel = document.createElement("div");
+				errorPanel.className = "panel empty-state error";
+				errorPanel.textContent = message;
+				artifactList.append(errorPanel);
+			}
+
+			async function fetchTableSchema(logicalName, knownDefinition) {
+				const [
+					entityDefinition,
+					attributes,
+					picklistAttributes,
+					statusAttributes,
+					stateAttributes,
+				] = await Promise.all([
+					knownDefinition || fetchEntityDefinitionByLogicalName(logicalName),
+					fetchAttributes(logicalName),
+					fetchOptionAttributes(
+						logicalName,
+						"Microsoft.Dynamics.CRM.PicklistAttributeMetadata",
+						"OptionSet,GlobalOptionSet",
+					),
+					fetchOptionAttributes(
+						logicalName,
+						"Microsoft.Dynamics.CRM.StatusAttributeMetadata",
+						"OptionSet",
+					),
+					fetchOptionAttributes(
+						logicalName,
+						"Microsoft.Dynamics.CRM.StateAttributeMetadata",
+						"OptionSet",
+					),
+				]);
+
+				const optionMetadata = new Map();
+				for (const attribute of [
+					...picklistAttributes,
+					...statusAttributes,
+					...stateAttributes,
+				]) {
+					if (attribute?.LogicalName) optionMetadata.set(attribute.LogicalName, attribute);
+				}
+
+				const properties = {};
+				const required = [];
+				for (const attribute of attributes) {
+					if (!attribute?.LogicalName) continue;
+					const property = buildProperty(
+						attribute,
+						optionMetadata.get(attribute.LogicalName),
+						entityDefinition,
+					);
+					properties[attribute.LogicalName] = property;
+					if (property.required) required.push(attribute.LogicalName);
+				}
+				required.sort();
+
+				return {
+					name: entityDefinition.LogicalName || logicalName,
+					title: getLabel(entityDefinition.DisplayName) || toTitle(logicalName),
+					schema: {
+						type: "array",
+						items: {
+							type: "object",
+							"x-ms-dataverse-entity": true,
+							"x-ms-dataverse-entityset":
+								entityDefinition.EntitySetName || `${logicalName}s`,
+							"x-ms-dataverse-primary-id":
+								entityDefinition.PrimaryIdAttribute || `${logicalName}id`,
+							"x-ms-dataverse-primary-name":
+								entityDefinition.PrimaryNameAttribute || null,
+							properties,
+							required,
+						},
+					},
+				};
+			}
+
+			async function findSolution(solutionName) {
+				const escaped = encodeODataString(solutionName);
+				const solutions = await fetchAll(
+					`solutions?$select=solutionid,uniquename,friendlyname&$filter=uniquename eq '${escaped}' or friendlyname eq '${escaped}'&$top=2`,
+				);
+				if (solutions.length === 0) {
+					throw new Error(`No solution found for "${solutionName}".`);
+				}
+				if (solutions.length > 1) {
+					throw new Error(
+						`More than one solution matched "${solutionName}". Use the unique name.`,
+					);
+				}
+				return solutions[0];
+			}
+
+			async function fetchEntityDefinitionByLogicalName(logicalName) {
+				const select = [
+					"LogicalName",
+					"DisplayName",
+					"EntitySetName",
+					"PrimaryIdAttribute",
+					"PrimaryNameAttribute",
+				].join(",");
+				return fetchOData(
+					`EntityDefinitions(LogicalName='${encodeODataString(logicalName)}')?$select=${select}`,
+				);
+			}
+
+			async function fetchEntityDefinitionByMetadataId(metadataId) {
+				const select = [
+					"LogicalName",
+					"DisplayName",
+					"EntitySetName",
+					"PrimaryIdAttribute",
+					"PrimaryNameAttribute",
+				].join(",");
+				return fetchOData(`EntityDefinitions(${stripBraces(metadataId)})?$select=${select}`);
+			}
+
+			async function fetchAttributes(logicalName) {
+				// Do not use $select here: MaxLength, MinValue, and MaxValue are
+				// derived-type properties and Dataverse rejects them on base
+				// AttributeMetadata collection selects.
+				const data = await fetchOData(
+					`EntityDefinitions(LogicalName='${encodeODataString(
+						logicalName,
+					)}')/Attributes`,
+				);
+				return data.value || [];
+			}
+
+			async function fetchOptionAttributes(logicalName, metadataType, expand) {
+				const data = await fetchOData(
+					`EntityDefinitions(LogicalName='${encodeODataString(
+						logicalName,
+					)}')/Attributes/${metadataType}?$expand=${expand}&$select=LogicalName,DisplayName`,
+				);
+				return data.value || [];
+			}
+
+			async function fetchAll(relativePath) {
+				const items = [];
+				let nextPath = relativePath;
+				while (nextPath) {
+					const data = await fetchOData(nextPath);
+					items.push(...(data.value || []));
+					nextPath = data["@odata.nextLink"] || "";
+				}
+				return items;
+			}
+
+			async function fetchOData(relativeOrAbsoluteUrl) {
+				const clientUrl = getClientUrl();
+				const safePath = sanitizeMetadataPath(relativeOrAbsoluteUrl);
+				const url = safePath.startsWith("http")
+					? safePath
+					: `${clientUrl}/api/data/${API_VERSION}/${safePath}`;
+				const response = await fetch(url, {
+					method: "GET",
+					headers: {
+						Accept: "application/json",
+						"OData-MaxVersion": "4.0",
+						"OData-Version": "4.0",
+					},
+					credentials: "same-origin",
+				});
+
+				if (!response.ok) {
+					const body = await response.text();
+					throw new Error(`GET ${url}\n\nHTTP ${response.status} ${response.statusText}\n${body}`);
+				}
+
+				return response.json();
+			}
+
+			function sanitizeMetadataPath(path) {
+				if (path.startsWith("http")) return path;
+				const invalidBaseAttributeSelect =
+					path.includes("/Attributes?$select=") &&
+					/(^|,)(MaxLength|MinValue|MaxValue)(,|$)/.test(path);
+				if (!invalidBaseAttributeSelect) return path;
+				return path.replace(/\?([$]select)=[^&]*/, "");
+			}
+
+			function getClientUrl() {
+				const xrm = getXrm();
+				return xrm.Utility.getGlobalContext().getClientUrl().replace(/\/$/, "");
+			}
+
+			function getXrm() {
+				if (window.Xrm) return window.Xrm;
+				if (window.parent?.Xrm) return window.parent.Xrm;
+				if (window.opener?.Xrm) return window.opener.Xrm;
+				throw new Error(
+					"Xrm context was not found. Run this page inside a model-driven app web resource or a console with Xrm available.",
+				);
+			}
+
+			function buildProperty(attribute, optionAttribute, entityDefinition) {
+				const dataverseType =
+					attribute.AttributeTypeName?.Value ||
+					`${attribute.AttributeType || "String"}Type`;
+				const property = {
+					type: "string",
+					title: getLabel(attribute.DisplayName) || attribute.LogicalName,
+					"x-ms-dataverse-attribute": attribute.LogicalName,
+					"x-ms-dataverse-type": dataverseType,
+					"x-ms-schema-name": attribute.SchemaName || attribute.LogicalName,
+				};
+
+				if (
+					attribute.IsValidForCreate === false &&
+					attribute.IsValidForUpdate === false
+				) {
+					property["x-ms-read-only"] = true;
+				}
+				if (isRequired(attribute)) property.required = true;
+				if (Number.isFinite(attribute.MaxLength)) property.maxLength = attribute.MaxLength;
+				if (Number.isFinite(attribute.MinValue)) property.minimum = attribute.MinValue;
+				if (Number.isFinite(attribute.MaxValue)) property.maximum = attribute.MaxValue;
+				if (attribute.IsPrimaryName) property["x-ms-dataverse-primary-name"] = true;
+				if (
+					attribute.IsPrimaryId ||
+					attribute.LogicalName === entityDefinition.PrimaryIdAttribute
+				) {
+					property["x-ms-dataverse-primary-id"] = true;
+					property.required = true;
+					property["x-ms-keyType"] = "primary";
+				}
+				if (optionAttribute) applyOptionSet(property, optionAttribute);
+				return property;
+			}
+
+			function applyOptionSet(property, optionAttribute) {
+				const optionSet = optionAttribute.OptionSet || optionAttribute.GlobalOptionSet;
+				const options = optionSet?.Options || [];
+				property.enum = options.map((option) => getLabel(option.Label));
+				property["x-ms-enum-values"] = options.map((option) => option.Value);
+				property.Color = options.map((option) => option.Color ?? null);
+				if (optionSet?.MetadataId) property["x-ms-optionsetmetadataid"] = optionSet.MetadataId;
+				property["x-ms-isGlobal"] = Boolean(optionAttribute.GlobalOptionSet);
+				property["x-ms-optionsetdisplayname"] =
+					getLabel(optionSet?.DisplayName) || property.title;
+				if (optionSet?.OptionSetType) property["x-ms-optionSetType"] = optionSet.OptionSetType;
+			}
+
+			function generateTypeScriptArtifacts(schema) {
+				const items = schema.schema.items;
+				const properties = items.properties || {};
+				const required = new Set(items.required || []);
+				const entitySetName =
+					items["x-ms-dataverse-entityset"] || `${schema.name || "Entity"}s`;
+				const primaryId = items["x-ms-dataverse-primary-id"];
+				const typeName = toTypeName(entitySetName);
+				const enumProperties = Object.entries(properties).filter(([, property]) =>
+					Array.isArray(property.enum),
+				);
+				const baseProperties = Object.entries(properties).filter(([, property]) =>
+					isBaseProperty(property),
+				);
+				const readProperties = Object.entries(properties).filter(
+					([, property]) => !isBaseProperty(property) && !isLookupProperty(property),
+				);
+				const lookupProperties = Object.entries(properties).filter(([, property]) =>
+					isLookupProperty(property),
+				);
+				return {
+					typeName,
+					model: generateModelFile({
+						typeName,
+						enumProperties,
+						baseProperties,
+						readProperties,
+						lookupProperties,
+						required,
+					}),
+					service: generateServiceFile({ typeName, entitySetName, primaryId }),
+				};
+			}
+
+			function generateModelFile({
+				typeName,
+				enumProperties,
+				baseProperties,
+				readProperties,
+				lookupProperties,
+				required,
+			}) {
+				const lines = [headerComment()];
+				for (const [name, property] of enumProperties) {
+					const enumName = `${typeName}${name}`;
+					lines.push(`export const ${enumName} = {`);
+					const values = property["x-ms-enum-values"] || [];
+					const labels = property.enum || [];
+					for (let index = 0; index < values.length; index += 1) {
+						const comma = index === values.length - 1 ? "" : ",";
+						lines.push(
+							`  ${formatObjectKey(values[index])}: '${escapeSingleQuote(
+								labels[index] ?? String(values[index]),
+							)}'${comma}`,
+						);
+					}
+					lines.push(`} as const;`);
+					lines.push(`export type ${enumName} = keyof typeof ${enumName};`);
+				}
+				if (enumProperties.length > 0) lines.push("");
+				lines.push(`export interface ${typeName}Base {`);
+				for (const [name, property] of baseProperties) {
+					lines.push(
+						`  ${name}${required.has(name) || property.required ? "" : "?"}: ${toTsType(
+							name,
+							property,
+							typeName,
+						)};`,
+					);
+				}
+				lines.push("}");
+				lines.push("");
+				lines.push(`export interface ${typeName} extends ${typeName}Base {`);
+				for (const [name, property] of readProperties) {
+					lines.push(
+						`  ${name}${required.has(name) || property.required ? "" : "?"}: ${toTsType(
+							name,
+							property,
+							typeName,
+						)};`,
+					);
+				}
+				for (const [name] of lookupProperties) {
+					lines.push(`  ${name}?: object;`);
+					lines.push(`  _${name}_value?: string;`);
+				}
+				lines.push("}");
+				return `${lines.join("\n")}\n`;
+			}
+
+			function generateServiceFile({ typeName, entitySetName, primaryId }) {
+				return `${headerComment()}
+
+import type { IOperationResult } from "@microsoft/power-apps/data";
+import { getClient } from "@microsoft/power-apps/data";
+import type {
+\tEntityMetadata,
+\tGetEntityMetadataOptions,
+} from "@microsoft/power-apps/data/metadata/dataverse";
+import { dataSourcesInfo } from "../../../.power/schemas/appschemas/dataSourcesInfo";
+import type { IGetAllOptions, IGetOptions } from "../models/CommonModels";
+import type { ${typeName}, ${typeName}Base } from "../models/${typeName}Model";
+
+//biome-ignore lint/complexity/noStaticOnlyClass: <wip
+export class ${typeName}Service {
+\tprivate static readonly dataSourceName = "${entitySetName}";
+
+\tprivate static readonly client = getClient(dataSourcesInfo);
+
+\tpublic static async create(
+\t\trecord: Omit<${typeName}Base, "${primaryId}">,
+\t): Promise<IOperationResult<${typeName}>> {
+\t\tconst result = await ${typeName}Service.client.createRecordAsync<
+\t\t\tOmit<${typeName}Base, "${primaryId}">,
+\t\t\t${typeName}
+\t\t>(${typeName}Service.dataSourceName, record);
+\t\treturn result;
+\t}
+
+\tpublic static async update(
+\t\tid: string,
+\t\tchangedFields: Partial<Omit<${typeName}Base, "${primaryId}">>,
+\t): Promise<IOperationResult<${typeName}>> {
+\t\tconst result = await ${typeName}Service.client.updateRecordAsync<
+\t\t\tPartial<Omit<${typeName}Base, "${primaryId}">>,
+\t\t\t${typeName}
+\t\t>(${typeName}Service.dataSourceName, id, changedFields);
+\t\treturn result;
+\t}
+
+\tpublic static async delete(id: string): Promise<void> {
+\t\tawait ${typeName}Service.client.deleteRecordAsync(
+\t\t\t${typeName}Service.dataSourceName,
+\t\t\tid,
+\t\t);
+\t}
+
+\tpublic static async get(
+\t\tid: string,
+\t\toptions?: IGetOptions,
+\t): Promise<IOperationResult<${typeName}>> {
+\t\tconst result =
+\t\t\tawait ${typeName}Service.client.retrieveRecordAsync<${typeName}>(
+\t\t\t\t${typeName}Service.dataSourceName,
+\t\t\t\tid,
+\t\t\t\toptions,
+\t\t\t);
+\t\treturn result;
+\t}
+
+\tpublic static async getAll(
+\t\toptions?: IGetAllOptions,
+\t): Promise<IOperationResult<${typeName}[]>> {
+\t\tconst result =
+\t\t\tawait ${typeName}Service.client.retrieveMultipleRecordsAsync<${typeName}>(
+\t\t\t\t${typeName}Service.dataSourceName,
+\t\t\t\toptions,
+\t\t\t);
+\t\treturn result;
+\t}
+
+\tpublic static getMetadata(
+\t\toptions: GetEntityMetadataOptions<${typeName}> = {},
+\t): Promise<IOperationResult<Partial<EntityMetadata>>> {
+\t\treturn ${typeName}Service.client.executeAsync({
+\t\t\tdataverseRequest: {
+\t\t\t\taction: "getEntityMetadata",
+\t\t\t\tparameters: {
+\t\t\t\t\ttableName: ${typeName}Service.dataSourceName,
+\t\t\t\t\toptions: options as GetEntityMetadataOptions,
+\t\t\t\t},
+\t\t\t},
+\t\t});
+\t}
+}
+`;
+			}
+
+			function isRequired(attribute) {
+				const value = attribute.RequiredLevel?.Value || attribute.RequiredLevel;
+				return value === "SystemRequired" || value === "ApplicationRequired";
+			}
+
+			function isBaseProperty(property) {
+				return !property["x-ms-read-only"] && !isLookupProperty(property);
+			}
+
+			function isLookupProperty(property) {
+				return property["x-ms-dataverse-type"] === "LookupType";
+			}
+
+			function toTsType(name, property, typeName) {
+				if (Array.isArray(property.enum)) return `${typeName}${name}`;
+				switch (property["x-ms-dataverse-type"]) {
+					case "BigIntType":
+					case "DecimalType":
+					case "DoubleType":
+					case "IntegerType":
+					case "MoneyType":
+						return "number";
+					case "BooleanType":
+						return "boolean";
+					default:
+						return "string";
+				}
+			}
+
+			function getLabel(labelContainer) {
+				return (
+					labelContainer?.UserLocalizedLabel?.Label ||
+					labelContainer?.LocalizedLabels?.[0]?.Label ||
+					""
+				);
+			}
+
+			function toTitle(value) {
+				return String(value)
+					.replace(/_/g, " ")
+					.replace(/\b\w/g, (letter) => letter.toUpperCase());
+			}
+
+			function toTypeName(value) {
+				const safeValue = String(value || "Entity").replace(/[^a-zA-Z0-9_]/g, "_");
+				return `${safeValue.charAt(0).toUpperCase()}${safeValue.slice(1)}`;
+			}
+
+			function encodeODataString(value) {
+				return String(value).replace(/'/g, "''");
+			}
+
+			function stripBraces(value) {
+				return String(value || "").replace(/[{}]/g, "");
+			}
+
+			function sanitizeFileName(value) {
+				return String(value || "dataverse").replace(/[^a-zA-Z0-9_.-]/g, "_");
+			}
+
+			function escapeHtml(value) {
+				return String(value)
+					.replace(/&/g, "&amp;")
+					.replace(/</g, "&lt;")
+					.replace(/>/g, "&gt;")
+					.replace(/"/g, "&quot;");
+			}
+
+			function escapeSingleQuote(value) {
+				return String(value).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+			}
+
+			function formatObjectKey(value) {
+				if (typeof value === "number" && Number.isFinite(value)) return String(value);
+				if (/^[A-Za-z_$][\w$]*$/.test(String(value))) return String(value);
+				return JSON.stringify(String(value));
+			}
+
+			function headerComment() {
+				return `/*!
+ * Copyright (C) Microsoft Corporation. All rights reserved.
+ * This file is autogenerated. Do not edit this file directly.
+ */`;
+			}
+
+			function downloadText(text, fileName, type) {
+				const blob = new Blob([text], { type });
+				const url = URL.createObjectURL(blob);
+				const anchor = document.createElement("a");
+				anchor.href = url;
+				anchor.download = fileName;
+				anchor.click();
+				URL.revokeObjectURL(url);
+			}
+
+			function showToast(message) {
+				toast.textContent = message;
+				toast.classList.add("visible");
+				window.clearTimeout(toastTimer);
+				toastTimer = window.setTimeout(() => {
+					toast.classList.remove("visible");
+				}, 1800);
+			}
+
+			function getMode() {
+				return document.querySelector("input[name='mode']:checked").value;
+			}
+
+			function setBusy(isBusy) {
+				extractButton.disabled = isBusy;
+				extractButton.textContent = isBusy ? "Extracting..." : "Extract Artifacts";
+			}
+
+			function setStatus(message) {
+				statusText.textContent = message;
+			}
+		</script>
+	</body>
+</html>
