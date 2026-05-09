@@ -543,7 +543,12 @@
 			}
 
 			function buildBundle(schemas, source) {
-				const files = [];
+				const files = [
+					{
+						path: ".power/schemas/appschemas/dataSourcesInfo.ts",
+						content: generateDataSourcesInfoFile(schemas),
+					},
+				];
 				for (const schema of schemas) {
 					const artifacts = generateTypeScriptArtifacts(schema);
 					files.push({
@@ -570,6 +575,42 @@
 					})),
 					files,
 				};
+			}
+
+			function generateDataSourcesInfoFile(schemas) {
+				const lines = [
+					"/*!",
+					" * Copyright (C) Microsoft Corporation. All rights reserved.",
+					" * This file is auto-generated. Do not modify it manually.",
+					" * Changes to this file may be overwritten.",
+					" */",
+					"",
+					"export const dataSourcesInfo = {",
+				];
+
+				const sortedSchemas = [...schemas].sort((left, right) =>
+					String(left.schema.items["x-ms-dataverse-entityset"]).localeCompare(
+						String(right.schema.items["x-ms-dataverse-entityset"]),
+					),
+				);
+
+				for (let index = 0; index < sortedSchemas.length; index += 1) {
+					const schema = sortedSchemas[index];
+					const items = schema.schema.items;
+					const entitySetName = items["x-ms-dataverse-entityset"];
+					const primaryKey = items["x-ms-dataverse-primary-id"];
+					const comma = index === sortedSchemas.length - 1 ? "" : ",";
+					lines.push(`  "${entitySetName}": {`);
+					lines.push(`    "tableId": "",`);
+					lines.push(`    "version": "",`);
+					lines.push(`    "primaryKey": "${primaryKey}",`);
+					lines.push(`    "dataSourceType": "Dataverse",`);
+					lines.push(`    "apis": {}`);
+					lines.push(`  }${comma}`);
+				}
+
+				lines.push("};");
+				return `${lines.join("\n")}\n`;
 			}
 
 			function renderArtifacts(bundle) {
