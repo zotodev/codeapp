@@ -9,7 +9,20 @@
   "buildEntryPoint": "index.html",
   "localAppUrl": "http://localhost:3000",
   "logoPath": "Default",
-  "connectionReferences": {},
+  "connectionReferences": {
+    "2a614080-937a-4a87-af14-7514ba2bad17": {
+      "id": "/providers/Microsoft.PowerApps/apis/shared_logicflows",
+      "displayName": "Logic flows",
+      "dataSources": [
+        "getapisubmissiondata"
+      ],
+      "workflowDetails": {
+        "workflowEntityId": "fc3988c3-c250-f111-a825-000d3aca4dd6",
+        "workflowDisplayName": "Get API Submission Data",
+        "workflowName": "7ecd2d3f-c4f9-fab0-45a8-30d5755ec6b9"
+      }
+    }
+  },
   "databaseReferences": {
     "default.cds": {
       "dataSources": {
