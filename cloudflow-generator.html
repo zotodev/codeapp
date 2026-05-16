@@ -157,58 +157,6 @@
 			.tree-folder { font-weight: 750; color: #1d2a38; }
 			.tree-file { padding-left: 18px; white-space: nowrap; }
 
-			/* ── Flows list table ───────────────────────────────────────── */
-			.flows-table-wrap {
-				overflow-x: auto;
-				border-radius: 8px;
-				border: 1px solid #dde3ea;
-			}
-
-			.flows-table {
-				width: 100%;
-				border-collapse: collapse;
-				font-size: 13px;
-			}
-
-			.flows-table th {
-				background: #f1f5f9;
-				padding: 10px 14px;
-				text-align: left;
-				font-weight: 700;
-				color: #263341;
-				border-bottom: 1px solid #dde3ea;
-				white-space: nowrap;
-			}
-
-			.flows-table td {
-				padding: 9px 14px;
-				border-bottom: 1px solid #f0f3f7;
-				vertical-align: middle;
-			}
-
-			.flows-table tr:last-child td { border-bottom: 0; }
-
-			.flows-table tr:hover td { background: #f6f9fc; }
-
-			.flows-table .use-btn {
-				height: 30px;
-				padding: 0 12px;
-				font-size: 12px;
-				white-space: nowrap;
-			}
-
-			.badge {
-				display: inline-block;
-				padding: 2px 8px;
-				border-radius: 99px;
-				font-size: 11px;
-				font-weight: 700;
-				background: #dcfce7;
-				color: #166534;
-			}
-
-			.badge.stopped { background: #fee2e2; color: #991b1b; }
-
 			/* ── Artifact list ──────────────────────────────────────────── */
 			.artifact-list { display: grid; gap: 16px; }
 
@@ -398,14 +346,6 @@
 				await navigator.clipboard.writeText(file.content);
 				showToast("File copied");
 			});
-			artifactList.addEventListener("click", (event) => {
-				const btn = event.target.closest("[data-flow-id]");
-				if (!btn) return;
-				// Switch to "add" mode and pre-fill the flow ID
-				modeInputs.find((i) => i.value === "add").checked = true;
-				syncMode();
-				flowIdInput.value = btn.dataset.flowId;
-			});
 
 			syncMode();
 
@@ -423,7 +363,7 @@
 					actionButton.textContent = "List Flows";
 					infoTitle.textContent = "List flows";
 					infoText.textContent =
-						"Lists all solution-aware instant flows that use the PowerApps trigger in your current environment. Click 'Use this flow' on any row to pre-fill the Add flow form.";
+						"Lists all instant flows with a PowerAppV2 trigger in your environment. Copy the Flow ID from the table, then switch to Add flow to generate artifacts.";
 				}
 			}
 
@@ -469,54 +409,64 @@
 			}
 
 			// ── List flows ─────────────────────────────────────────────────────
-			// Dataverse: workflows entity filtered to:
-			//   category = 5 (Modern flow)
-			//   triggertype = manual (PowerApps trigger)
-			//   solutionid is not null (solution-aware)
 			async function fetchSolutionAwareFlows() {
-				// category: 5 = Modern flow; type: 1 = definition
-				// We filter client-side for PowerApps trigger because OData doesn't
-				// support substring on clientdata reliably.
+				// category 5 = Modern flow, type 1 = definition
+				// We include clientdata so we can filter by trigger kind client-side
+				// (PowerAppV2 = manual PowerApps trigger) without a second round-trip.
+				// resourceid = external flow GUID (shown in URLs / used by CLI)
+				// workflowid = Dataverse entity PK
 				const data = await fetchAll(
-					`workflows?$select=workflowid,name,statecode,modifiedon,solutionid` +
-					`&$filter=category eq 5 and type eq 1 and _solutionid_value ne null` +
+					`workflows?$select=workflowid,resourceid,name,statecode,modifiedon,clientdata` +
+					`&$filter=category eq 5 and type eq 1` +
 					`&$orderby=name asc`
 				);
-				// Keep only flows whose clientdata contains PowerApps trigger
-				// (clientdata is large — we fetch it per-flow only in add mode,
-				//  but for the list we rely on the statecode + solution filter which
-				//  is the same heuristic the CLI uses)
-				return data;
+				// Keep only flows whose trigger kind is PowerAppV2 (manual PowerApps trigger)
+				return data.filter((f) => hasPowerAppV2Trigger(f.clientdata));
 			}
 
-			// ── Fetch flow + build artifacts ────────────────────────────────────
+			// Returns true when the flow's clientdata contains a PowerAppV2 trigger
+			function hasPowerAppV2Trigger(clientdataRaw) {
+				if (!clientdataRaw) return false;
+				let cd;
+				try { cd = JSON.parse(clientdataRaw); } catch { return false; }
+				const definition = cd?.properties?.definition || cd?.definition || cd;
+				const triggers = definition?.triggers || {};
+				return Object.values(triggers).some((t) => {
+					const kind = (t?.kind || "").toLowerCase();
+					return kind === "powerappv2" || kind === "powerappsv2" || kind === "powerapps";
+				});
+			}
+
+				// ── Fetch flow + build artifacts ────────────────────────────────────
 			async function fetchFlowAndBuild(flowId) {
 				const cleanId = stripBraces(flowId);
 
-				// 1. Core metadata
-				const workflow = await fetchOData(
-					`workflows(${cleanId})?$select=workflowid,name,clientdata,statecode,solutionid`
+				// Always fetch directly by resourceid (the external flow GUID)
+				const results = await fetchAll(
+					`workflows?$select=workflowid,resourceid,name,clientdata` +
+					`&$filter=resourceid eq '${cleanId}' and category eq 5 and type eq 1`
 				);
+				if (results.length === 0) {
+					throw new Error(
+						`No PowerAppV2-trigger flow found with resourceid "${cleanId}".\n` +
+						`Use List Flows to find the correct ID.`
+					);
+				}
+				const w = results[0];
+				const displayName      = w.name || cleanId;
+				const workflowEntityId = stripBraces(w.workflowid);
+				const workflowName     = cleanId; // resourceid is workflowName in power.config.json
 
-				const displayName = workflow.name || cleanId;
-
-				// 2. Parse clientdata — this is the flow definition JSON that contains
-				//    the trigger and its schema
 				let clientData;
 				try {
-					clientData = JSON.parse(workflow.clientdata || "{}");
+					clientData = JSON.parse(w.clientdata || "{}");
 				} catch {
 					throw new Error("Could not parse flow clientdata JSON.");
 				}
 
-				// 3. Extract trigger inputs from the flow definition
-				//    Power Automate stores trigger schema under:
-				//    properties.definition.triggers.<triggerName>.inputs.schema
-				//    or properties.definition.triggers.<triggerName>.metadata.operationMetadataId
 				const { inputProperties, requiredFields, outputProperties, apiVersion } =
 					parseTriggerSchema(clientData, displayName);
 
-				// 4. Generate all artifacts
 				const dsName   = toDataSourceName(displayName);
 				const typeName = toTypeName(dsName);
 				const refId    = generateUUID();
@@ -526,8 +476,8 @@
 					dsName,
 					typeName,
 					refId,
-					workflowEntityId: cleanId,
-					workflowName: cleanId,
+					workflowEntityId,
+					workflowName,
 					apiVersion,
 					inputProperties,
 					requiredFields,
@@ -552,16 +502,22 @@
 				let triggerDef = null;
 				for (const key of triggerKeys) {
 					const t = triggers[key];
+					const kind = (t?.kind || "").toLowerCase();
 					if (
-						t?.type === "Request" ||
-						t?.kind === "PowerAppsV2" ||
-						t?.kind === "PowerApps" ||
-						t?.type === "ApiConnectionWebhook" ||
-						key.toLowerCase().includes("manual") ||
-						key.toLowerCase().includes("powerapps")
+						kind === "powerapps" ||
+						kind === "powerappsv2" ||
+						kind === "powerappv2" ||
+						(t?.type === "Request" && kind.startsWith("powerapp"))
 					) {
 						triggerDef = t;
 						break;
+					}
+				}
+				// Fallback: any Request type trigger
+				if (!triggerDef) {
+					for (const key of triggerKeys) {
+						const t = triggers[key];
+						if (t?.type === "Request") { triggerDef = t; break; }
 					}
 				}
 
@@ -863,50 +819,60 @@ export class ${typeName}Service {
 				if (flows.length === 0) {
 					const empty = document.createElement("div");
 					empty.className = "panel empty-state";
-					empty.textContent = "No solution-aware PowerApps-trigger flows found in this environment.";
+					empty.textContent = "No PowerAppV2-trigger flows found in this environment.";
 					artifactList.append(empty);
 					return;
 				}
 
-				const wrap = document.createElement("div");
-				wrap.className = "flows-table-wrap";
+				// Build CLI-style plain-text table
+				const rows = flows.map((f) => ({
+					name: f.name || "—",
+					status: f.statecode === 1 ? "Active" : "Stopped",
+					modified: f.modifiedon
+						? new Date(f.modifiedon).toLocaleString()
+						: "—",
+					id: stripBraces(f.resourceid || f.workflowid),
+				}));
 
-				const table = document.createElement("table");
-				table.className = "flows-table";
-				table.innerHTML = `
-					<thead>
-						<tr>
-							<th>Name</th>
-							<th>Status</th>
-							<th>Modified</th>
-							<th>Flow ID</th>
-							<th></th>
-						</tr>
-					</thead>
-				`;
+				const colW = {
+					name:     Math.max(4,  ...rows.map((r) => r.name.length)),
+					status:   Math.max(6,  ...rows.map((r) => r.status.length)),
+					modified: Math.max(11, ...rows.map((r) => r.modified.length)),
+					id:       Math.max(7,  ...rows.map((r) => r.id.length)),
+				};
 
-				const tbody = document.createElement("tbody");
-				for (const flow of flows) {
-					const tr = document.createElement("tr");
-					const status = flow.statecode === 1 ? "Stopped" : "Started";
-					const modifiedOn = flow.modifiedon
-						? new Date(flow.modifiedon).toLocaleDateString()
-						: "—";
-					const flowId = stripBraces(flow.workflowid);
+				const sep = "  " + "-".repeat(colW.name + colW.status + colW.modified + colW.id + 9);
 
-					tr.innerHTML = `
-						<td>${escapeHtml(flow.name || "—")}</td>
-						<td><span class="badge${flow.statecode === 1 ? " stopped" : ""}">${escapeHtml(status)}</span></td>
-						<td>${escapeHtml(modifiedOn)}</td>
-						<td style="font-family:monospace;font-size:12px">${escapeHtml(flowId)}</td>
-						<td><button type="button" class="use-btn" data-flow-id="${escapeAttr(flowId)}">Use this flow</button></td>
-					`;
-					tbody.append(tr);
-				}
+				const pad = (s, w) => s + " ".repeat(Math.max(0, w - s.length));
 
-				table.append(tbody);
-				wrap.append(table);
-				artifactList.append(wrap);
+				const header = `  ${pad("Name", colW.name)}  ${pad("Status", colW.status)}  ${pad("Modified On", colW.modified)}  ${"Flow ID"}`;
+
+				const lines = [
+					"  Cloud Flows",
+					sep,
+					header,
+					sep,
+					...rows.map((r) =>
+						`  ${pad(r.name, colW.name)}  ${pad(r.status, colW.status)}  ${pad(r.modified, colW.modified)}  ${r.id}`
+					),
+					sep,
+				];
+
+				const card = document.createElement("article");
+				card.className = "artifact-card";
+
+				const head = document.createElement("div");
+				head.className = "artifact-head";
+				const title = document.createElement("p");
+				title.className = "file-path";
+				title.textContent = `${flows.length} flow${flows.length !== 1 ? "s" : ""} — copy a Flow ID and use it in Add flow`;
+				head.append(title);
+
+				const pre = document.createElement("pre");
+				pre.textContent = lines.join("\n");
+
+				card.append(head, pre);
+				artifactList.append(card);
 			}
 
 			function renderArtifacts(bundle) {
