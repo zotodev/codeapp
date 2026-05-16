@@ -1,0 +1,1102 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Cloud Flow Artefacts Generator</title>
+		<style>
+			:root {
+				color-scheme: light;
+				font-family:
+					Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+					"Segoe UI", sans-serif;
+				background: #f6f7f9;
+				color: #18202a;
+			}
+
+			* { box-sizing: border-box; }
+
+			body { margin: 0; min-height: 100vh; background: #f6f7f9; }
+
+			main {
+				width: 100%;
+				min-height: 100vh;
+				display: grid;
+				grid-template-columns: minmax(280px, 20vw) 1fr;
+				gap: 0;
+			}
+
+			.sidebar {
+				min-height: 100vh;
+				padding: 24px;
+				background: #ffffff;
+				border-right: 1px solid #dde3ea;
+				position: sticky;
+				top: 0;
+				align-self: start;
+			}
+
+			h1 { margin: 0 0 6px; font-size: 20px; font-weight: 720; }
+
+			p { margin: 0; color: #526170; line-height: 1.5; }
+
+			.info-card {
+				margin-bottom: 22px;
+				padding: 12px;
+				border: 1px solid #dde3ea;
+				border-radius: 8px;
+				background: #f9fbfd;
+			}
+
+			.info-card strong { display: block; margin-bottom: 4px; font-size: 13px; color: #1d2a38; }
+			.info-card p { font-size: 12px; }
+
+			form { display: grid; gap: 16px; }
+
+			.mode-row { display: grid; gap: 8px; }
+
+			.mode-row label {
+				display: inline-flex;
+				align-items: center;
+				gap: 8px;
+				min-height: 38px;
+				padding: 0 10px;
+				border: 1px solid #c8d2dc;
+				border-radius: 6px;
+				background: #f9fbfd;
+				font-size: 13px;
+				font-weight: 700;
+				cursor: pointer;
+			}
+
+			.input-row { display: grid; gap: 12px; }
+
+			.field { display: grid; gap: 7px; font-size: 13px; font-weight: 650; color: #263341; }
+
+			input[type="text"] {
+				width: 100%;
+				height: 40px;
+				border: 1px solid #c8d2dc;
+				border-radius: 6px;
+				padding: 0 12px;
+				font: inherit;
+				color: #18202a;
+				background: #ffffff;
+			}
+
+			input[type="text"]:focus {
+				outline: 3px solid #b7d9ff;
+				border-color: #2b73c5;
+			}
+
+			button {
+				height: 40px;
+				border: 0;
+				border-radius: 6px;
+				padding: 0 16px;
+				font: inherit;
+				font-weight: 700;
+				color: #ffffff;
+				background: #245ea8;
+				cursor: pointer;
+			}
+
+			button.icon {
+				width: 32px;
+				height: 32px;
+				display: inline-grid;
+				place-items: center;
+				padding: 0;
+				color: #1d2a38;
+				background: #eef2f6;
+			}
+
+			button.secondary { color: #1d2a38; background: #e8edf2; }
+			button:disabled { cursor: not-allowed; opacity: 0.62; }
+
+			.status { display: grid; gap: 8px; margin-top: 18px; color: #526170; font-size: 13px; }
+			.actions { display: grid; gap: 8px; }
+
+			.workspace { min-width: 0; padding: 24px; }
+
+			.workspace-head {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				gap: 16px;
+				margin-bottom: 16px;
+			}
+
+			.workspace-title { display: grid; gap: 4px; }
+			.workspace-title strong { font-size: 18px; }
+
+			.panel {
+				background: #ffffff;
+				border: 1px solid #dde3ea;
+				border-radius: 8px;
+				overflow: hidden;
+			}
+
+			details.file-tree { margin-bottom: 16px; }
+
+			details.file-tree summary {
+				cursor: pointer;
+				padding: 14px 16px;
+				font-weight: 750;
+				border-bottom: 1px solid #dde3ea;
+			}
+
+			.tree-body {
+				padding: 12px 16px 16px;
+				font: 12px/1.7 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+				color: #334252;
+				overflow: auto;
+			}
+
+			.tree-group { margin-bottom: 10px; }
+			.tree-folder { font-weight: 750; color: #1d2a38; }
+			.tree-file { padding-left: 18px; white-space: nowrap; }
+
+			/* ── Flows list table ───────────────────────────────────────── */
+			.flows-table-wrap {
+				overflow-x: auto;
+				border-radius: 8px;
+				border: 1px solid #dde3ea;
+			}
+
+			.flows-table {
+				width: 100%;
+				border-collapse: collapse;
+				font-size: 13px;
+			}
+
+			.flows-table th {
+				background: #f1f5f9;
+				padding: 10px 14px;
+				text-align: left;
+				font-weight: 700;
+				color: #263341;
+				border-bottom: 1px solid #dde3ea;
+				white-space: nowrap;
+			}
+
+			.flows-table td {
+				padding: 9px 14px;
+				border-bottom: 1px solid #f0f3f7;
+				vertical-align: middle;
+			}
+
+			.flows-table tr:last-child td { border-bottom: 0; }
+
+			.flows-table tr:hover td { background: #f6f9fc; }
+
+			.flows-table .use-btn {
+				height: 30px;
+				padding: 0 12px;
+				font-size: 12px;
+				white-space: nowrap;
+			}
+
+			.badge {
+				display: inline-block;
+				padding: 2px 8px;
+				border-radius: 99px;
+				font-size: 11px;
+				font-weight: 700;
+				background: #dcfce7;
+				color: #166534;
+			}
+
+			.badge.stopped { background: #fee2e2; color: #991b1b; }
+
+			/* ── Artifact list ──────────────────────────────────────────── */
+			.artifact-list { display: grid; gap: 16px; }
+
+			.artifact-card {
+				background: #ffffff;
+				border: 1px solid #dde3ea;
+				border-radius: 8px;
+				overflow: hidden;
+			}
+
+			.artifact-head {
+				display: grid;
+				grid-template-columns: minmax(0, 1fr) auto;
+				gap: 12px;
+				align-items: center;
+				padding: 12px 14px;
+				border-bottom: 1px solid #dde3ea;
+			}
+
+			.file-path {
+				margin: 0;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+				color: #1d2a38;
+			}
+
+			pre {
+				margin: 0;
+				max-height: 520px;
+				overflow: auto;
+				padding: 16px;
+				background: #101820;
+				color: #d7e2ee;
+				font: 13px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+				tab-size: 2;
+				white-space: pre;
+			}
+
+			.empty-state {
+				min-height: 360px;
+				display: grid;
+				place-items: center;
+				padding: 32px;
+				text-align: center;
+				color: #526170;
+			}
+
+			.toast {
+				position: fixed;
+				right: 24px;
+				bottom: 24px;
+				z-index: 20;
+				min-width: 180px;
+				padding: 10px 12px;
+				border-radius: 6px;
+				background: #18202a;
+				color: #ffffff;
+				font-size: 13px;
+				box-shadow: 0 14px 36px rgba(24, 32, 42, 0.22);
+				opacity: 0;
+				transform: translateY(8px);
+				pointer-events: none;
+				transition: opacity 160ms ease, transform 160ms ease;
+			}
+
+			.toast.visible { opacity: 1; transform: translateY(0); }
+			.error-text { color: #b42318; }
+
+			@media (max-width: 900px) {
+				main { grid-template-columns: 1fr; }
+				.sidebar { min-height: auto; position: static; border-right: 0; border-bottom: 1px solid #dde3ea; }
+				.workspace-head, .artifact-head { grid-template-columns: 1fr; display: grid; }
+				button { width: 100%; }
+				button.icon, .flows-table .use-btn { width: auto; }
+			}
+		</style>
+	</head>
+	<body>
+		<main>
+			<aside class="sidebar">
+				<h1>Cloud Flow Generator</h1>
+				<div class="info-card">
+					<strong id="infoTitle">List flows</strong>
+					<p id="infoText">
+						List all solution-aware manual flows with a PowerApps trigger in
+						your current environment.
+					</p>
+				</div>
+
+				<form id="mainForm">
+					<div class="mode-row" role="radiogroup" aria-label="Action">
+						<label>
+							<input type="radio" name="mode" value="list" checked />
+							List flows
+						</label>
+						<label>
+							<input type="radio" name="mode" value="add" />
+							Add flow (generate artifacts)
+						</label>
+					</div>
+
+					<div class="input-row" id="addRow" style="display:none">
+						<label class="field">
+							<span>Flow ID (workflow GUID)</span>
+							<input
+								id="flowIdInput"
+								type="text"
+								placeholder="7ecd2d3f-c4f9-fab0-45a8-30d5755ec6b9"
+								autocomplete="off"
+							/>
+						</label>
+					</div>
+
+					<button id="actionButton" type="submit">List Flows</button>
+				</form>
+
+				<div class="status">
+					<span id="statusText"></span>
+					<div class="actions">
+						<button id="bulkDownloadButton" class="secondary" type="button" disabled>
+							Bulk Download
+						</button>
+					</div>
+				</div>
+			</aside>
+
+			<section class="workspace">
+				<div class="workspace-head">
+					<div class="workspace-title">
+						<strong id="workspaceTitle">Cloud Flows</strong>
+						<p id="summaryText">Run an action to see results here.</p>
+					</div>
+				</div>
+
+				<details id="fileTreePanel" class="panel file-tree" style="display:none">
+					<summary>File structure</summary>
+					<div id="fileTree" class="tree-body"></div>
+				</details>
+
+				<div id="artifactList" class="artifact-list">
+					<div class="panel empty-state">
+						<p>Select an action and click the button to get started.</p>
+					</div>
+				</div>
+			</section>
+		</main>
+		<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+		<script>
+			const API_VERSION = "v9.2";
+
+			// DOM
+			const mainForm        = document.querySelector("#mainForm");
+			const modeInputs      = [...document.querySelectorAll("input[name='mode']")];
+			const addRow          = document.querySelector("#addRow");
+			const flowIdInput     = document.querySelector("#flowIdInput");
+			const actionButton    = document.querySelector("#actionButton");
+			const infoTitle       = document.querySelector("#infoTitle");
+			const infoText        = document.querySelector("#infoText");
+			const statusText      = document.querySelector("#statusText");
+			const summaryText     = document.querySelector("#summaryText");
+			const workspaceTitle  = document.querySelector("#workspaceTitle");
+			const fileTree        = document.querySelector("#fileTree");
+			const fileTreePanel   = document.querySelector("#fileTreePanel");
+			const artifactList    = document.querySelector("#artifactList");
+			const bulkDownloadButton = document.querySelector("#bulkDownloadButton");
+			const toast           = document.querySelector("#toast");
+
+			let generatedBundle = "";
+			let generatedFiles  = [];
+			let toastTimer      = 0;
+
+			modeInputs.forEach((input) => input.addEventListener("change", syncMode));
+			mainForm.addEventListener("submit", handleAction);
+			bulkDownloadButton.addEventListener("click", () => {
+				if (!generatedBundle) return;
+				downloadText(generatedBundle, "cloudflow-artifacts.json", "application/json");
+				showToast("Bundle download started");
+			});
+			artifactList.addEventListener("click", async (event) => {
+				const btn = event.target.closest("[data-copy-index]");
+				if (!btn) return;
+				const file = generatedFiles[Number(btn.dataset.copyIndex)];
+				if (!file) return;
+				await navigator.clipboard.writeText(file.content);
+				showToast("File copied");
+			});
+			artifactList.addEventListener("click", (event) => {
+				const btn = event.target.closest("[data-flow-id]");
+				if (!btn) return;
+				// Switch to "add" mode and pre-fill the flow ID
+				modeInputs.find((i) => i.value === "add").checked = true;
+				syncMode();
+				flowIdInput.value = btn.dataset.flowId;
+			});
+
+			syncMode();
+
+			// ── Mode sync ──────────────────────────────────────────────────────
+			function syncMode() {
+				const mode = getMode();
+				if (mode === "add") {
+					addRow.style.display = "";
+					actionButton.textContent = "Generate Artifacts";
+					infoTitle.textContent = "Add flow";
+					infoText.textContent =
+						"Enter a Flow ID (workflow GUID). The generator fetches the flow's trigger definition from Dataverse and produces all four artefacts automatically.";
+				} else {
+					addRow.style.display = "none";
+					actionButton.textContent = "List Flows";
+					infoTitle.textContent = "List flows";
+					infoText.textContent =
+						"Lists all solution-aware instant flows that use the PowerApps trigger in your current environment. Click 'Use this flow' on any row to pre-fill the Add flow form.";
+				}
+			}
+
+			// ── Main dispatcher ────────────────────────────────────────────────
+			async function handleAction(event) {
+				event.preventDefault();
+				const mode = getMode();
+				setBusy(true);
+				generatedBundle = "";
+				generatedFiles  = [];
+				bulkDownloadButton.disabled = true;
+				fileTreePanel.style.display = "none";
+
+				try {
+					if (mode === "list") {
+						setStatus("Querying solution-aware flows…");
+						const flows = await fetchSolutionAwareFlows();
+						renderFlowsList(flows);
+						workspaceTitle.textContent = "Available Cloud Flows";
+						summaryText.textContent = `${flows.length} solution-aware PowerApps-trigger flow${flows.length !== 1 ? "s" : ""} found.`;
+						setStatus("Done.");
+					} else {
+						const flowId = flowIdInput.value.trim();
+						if (!flowId) { showToast("Enter a Flow ID."); setBusy(false); return; }
+						setStatus("Fetching flow definition…");
+						const bundle = await fetchFlowAndBuild(flowId);
+						generatedBundle = JSON.stringify(bundle, null, 2);
+						generatedFiles  = bundle.files;
+						renderArtifacts(bundle);
+						workspaceTitle.textContent = `Artifacts — ${bundle.displayName}`;
+						summaryText.textContent = `${bundle.files.length} files generated for "${bundle.displayName}".`;
+						bulkDownloadButton.disabled = false;
+						setStatus("Artifacts ready.");
+					}
+				} catch (err) {
+					const msg = err instanceof Error ? err.message : String(err);
+					renderError(msg);
+					summaryText.textContent = "Action failed.";
+					setStatus("Fix the input or context and try again.");
+				} finally {
+					setBusy(false);
+				}
+			}
+
+			// ── List flows ─────────────────────────────────────────────────────
+			// Dataverse: workflows entity filtered to:
+			//   category = 5 (Modern flow)
+			//   triggertype = manual (PowerApps trigger)
+			//   solutionid is not null (solution-aware)
+			async function fetchSolutionAwareFlows() {
+				// category: 5 = Modern flow; type: 1 = definition
+				// We filter client-side for PowerApps trigger because OData doesn't
+				// support substring on clientdata reliably.
+				const data = await fetchAll(
+					`workflows?$select=workflowid,name,statecode,modifiedon,solutionid` +
+					`&$filter=category eq 5 and type eq 1 and _solutionid_value ne null` +
+					`&$orderby=name asc`
+				);
+				// Keep only flows whose clientdata contains PowerApps trigger
+				// (clientdata is large — we fetch it per-flow only in add mode,
+				//  but for the list we rely on the statecode + solution filter which
+				//  is the same heuristic the CLI uses)
+				return data;
+			}
+
+			// ── Fetch flow + build artifacts ────────────────────────────────────
+			async function fetchFlowAndBuild(flowId) {
+				const cleanId = stripBraces(flowId);
+
+				// 1. Core metadata
+				const workflow = await fetchOData(
+					`workflows(${cleanId})?$select=workflowid,name,clientdata,statecode,solutionid`
+				);
+
+				const displayName = workflow.name || cleanId;
+
+				// 2. Parse clientdata — this is the flow definition JSON that contains
+				//    the trigger and its schema
+				let clientData;
+				try {
+					clientData = JSON.parse(workflow.clientdata || "{}");
+				} catch {
+					throw new Error("Could not parse flow clientdata JSON.");
+				}
+
+				// 3. Extract trigger inputs from the flow definition
+				//    Power Automate stores trigger schema under:
+				//    properties.definition.triggers.<triggerName>.inputs.schema
+				//    or properties.definition.triggers.<triggerName>.metadata.operationMetadataId
+				const { inputProperties, requiredFields, outputProperties, apiVersion } =
+					parseTriggerSchema(clientData, displayName);
+
+				// 4. Generate all artifacts
+				const dsName   = toDataSourceName(displayName);
+				const typeName = toTypeName(dsName);
+				const refId    = generateUUID();
+
+				return buildBundle({
+					displayName,
+					dsName,
+					typeName,
+					refId,
+					workflowEntityId: cleanId,
+					workflowName: cleanId,
+					apiVersion,
+					inputProperties,
+					requiredFields,
+					outputProperties,
+				});
+			}
+
+			// ── Parse the trigger schema out of clientdata ──────────────────────
+			function parseTriggerSchema(clientData, displayName) {
+				const apiVersion = "2015-02-01-preview";
+
+				// Try: properties.definition.triggers
+				const definition =
+					clientData?.properties?.definition ||
+					clientData?.definition ||
+					clientData;
+
+				const triggers = definition?.triggers || {};
+				const triggerKeys = Object.keys(triggers);
+
+				// Find the PowerApps / manual trigger
+				let triggerDef = null;
+				for (const key of triggerKeys) {
+					const t = triggers[key];
+					if (
+						t?.type === "Request" ||
+						t?.kind === "PowerAppsV2" ||
+						t?.kind === "PowerApps" ||
+						t?.type === "ApiConnectionWebhook" ||
+						key.toLowerCase().includes("manual") ||
+						key.toLowerCase().includes("powerapps")
+					) {
+						triggerDef = t;
+						break;
+					}
+				}
+
+				// Fallback: take first trigger
+				if (!triggerDef && triggerKeys.length > 0) {
+					triggerDef = triggers[triggerKeys[0]];
+				}
+
+				// Input schema lives at: inputs.schema or metadata.schema
+				const inputSchema =
+					triggerDef?.inputs?.schema ||
+					triggerDef?.metadata?.schema ||
+					{};
+
+				const rawInputProperties  = inputSchema.properties  || {};
+				const rawRequiredFields   = inputSchema.required    || [];
+
+				// Normalise input properties to the shape used in .Schema.json
+				const inputProperties = {};
+				for (const [name, raw] of Object.entries(rawInputProperties)) {
+					inputProperties[name] = normaliseProperty(name, raw);
+				}
+
+				// Outputs — look for response actions in the definition
+				const actions   = definition?.actions || {};
+				const outputProperties = extractOutputProperties(actions);
+
+				return { inputProperties, requiredFields: rawRequiredFields, outputProperties, apiVersion };
+			}
+
+			function normaliseProperty(name, raw) {
+				const hint = raw["x-ms-content-hint"] || inferContentHint(raw);
+				const prop = {
+					title: raw.title || toTitle(name),
+					"x-ms-dynamically-added": true,
+					"x-ms-content-hint": hint,
+				};
+
+				if (raw.description) prop.description = raw.description;
+
+				if (hint === "FILE" || raw.type === "object") {
+					prop.type = "object";
+					prop.properties = raw.properties || {
+						contentBytes: { type: "string", format: "byte" },
+						name: { type: "string" },
+					};
+				} else if (raw.type === "number" || raw.type === "integer") {
+					prop.type = "number";
+				} else if (raw.type === "boolean") {
+					prop.type = "boolean";
+				} else {
+					prop.type = "string";
+					if (raw.format) prop.format = raw.format;
+				}
+
+				// Preserve any extra x- keys from the original
+				for (const [k, v] of Object.entries(raw)) {
+					if (k.startsWith("x-") && !(k in prop)) prop[k] = v;
+				}
+
+				return prop;
+			}
+
+			function inferContentHint(raw) {
+				if (raw.type === "boolean") return "BOOLEAN";
+				if (raw.type === "number" || raw.type === "integer") return "NUMBER";
+				if (raw.type === "object") return "FILE";
+				if (raw.format === "date" || raw.format === "date-time") return "DATE";
+				if (raw.format === "email") return "EMAIL";
+				return "TEXT";
+			}
+
+			function extractOutputProperties(actions) {
+				// Look for a "Response" action — that's where outputs live
+				for (const action of Object.values(actions)) {
+					if (
+						action?.type === "Response" ||
+						action?.type === "ApiConnection" ||
+						String(action?.type).toLowerCase().includes("response")
+					) {
+						const schema = action?.inputs?.schema || action?.inputs?.body?.schema || {};
+						const props  = schema.properties || {};
+						if (Object.keys(props).length > 0) {
+							const out = {};
+							for (const [name, raw] of Object.entries(props)) {
+								out[name] = {
+									title: raw.title || toTitle(name),
+									"x-ms-dynamically-added": true,
+									type: raw.type === "number" || raw.type === "integer" ? "number"
+										: raw.type === "boolean" ? "boolean" : "string",
+								};
+							}
+							return out;
+						}
+					}
+				}
+				// Fallback: generic response shape that matches what the CLI emits
+				return {
+					response:      { title: "Response",      "x-ms-dynamically-added": true, type: "string" },
+					response_code: { title: "Response Code", "x-ms-dynamically-added": true, type: "number" },
+				};
+			}
+
+			// ── Artifact builder ────────────────────────────────────────────────
+			function buildBundle({ displayName, dsName, typeName, refId, workflowEntityId, workflowName, apiVersion, inputProperties, requiredFields, outputProperties }) {
+				const schema          = buildSchema({ displayName, apiVersion, inputProperties, requiredFields, outputProperties });
+				const modelFile       = generateModelFile({ typeName, inputProperties, requiredFields, outputProperties });
+				const serviceFile     = generateServiceFile({ typeName, dsName, apiVersion });
+				const dsEntry         = generateDataSourcesEntry({ dsName, apiVersion });
+				const configEntry     = generatePowerConfigEntry({ refId, dsName, displayName, workflowEntityId, workflowName });
+
+				const files = [
+					{ path: `.power/schemas/logicflows/${typeName}.Schema.json`,         content: JSON.stringify(schema, null, 2) },
+					{ path: `src/generated/models/${typeName}Model.ts`,                  content: modelFile },
+					{ path: `src/generated/services/${typeName}Service.ts`,              content: serviceFile },
+					{ path: ".power/schemas/appschemas/dataSourcesInfo.ts  ← entry to merge", content: dsEntry },
+					{ path: "power.config.json  ← connectionReferences entry to merge",  content: configEntry },
+				];
+
+				return { displayName, dsName, generatedAt: new Date().toISOString(), files };
+			}
+
+			// ── Schema ─────────────────────────────────────────────────────────
+			function buildSchema({ displayName, apiVersion, inputProperties, requiredFields, outputProperties }) {
+				return {
+					name: displayName,
+					id: "/providers/Microsoft.PowerApps/apis/shared_logicflows",
+					type: "Microsoft.PowerApps/apis",
+					properties: {
+						displayName,
+						isCustom: false,
+						swagger: {
+							swagger: "2.0",
+							info: { title: displayName, version: apiVersion },
+							host: "india-001.azure-apim.net",
+							schemes: ["https"],
+							consumes: ["application/json"],
+							produces: ["application/json"],
+							paths: {
+								"/{connectionId}/triggers/manual/run": {
+									post: {
+										operationId: "Run",
+										description: "Runs a logic flow trigger.",
+										parameters: [
+											{ name: "connectionId", in: "path", required: true, type: "string", "x-ms-visibility": "internal" },
+											{ name: "input", description: "The trigger's input", in: "body", required: true, schema: { $ref: "#/definitions/ManualTriggerInput" } },
+											{ name: "api-version", description: "The api version", in: "query", required: true, default: apiVersion, "x-ms-visibility": "internal", type: "string" },
+										],
+										responses: {
+											200: { description: "Ok", schema: { $ref: "#/definitions/ResponseActionOutput" } },
+											default: { description: "The Flow Response.", schema: { type: "object" } },
+										},
+									},
+								},
+							},
+							definitions: {
+								ManualTriggerInput: {
+									type: "object",
+									properties: inputProperties,
+									required: requiredFields,
+								},
+								ResponseActionOutput: {
+									type: "object",
+									properties: outputProperties,
+									additionalProperties: {},
+								},
+							},
+							basePath: "/apim/logicflows",
+						},
+					},
+				};
+			}
+
+			// ── Model file ─────────────────────────────────────────────────────
+			function generateModelFile({ typeName, inputProperties, requiredFields, outputProperties }) {
+				const requiredSet = new Set(requiredFields);
+				const lines = [headerComment(), ""];
+
+				lines.push("export interface ManualTriggerInput {");
+				for (const [name, prop] of Object.entries(inputProperties)) {
+					const opt = requiredSet.has(name) ? "" : "?";
+					lines.push(`  // ${prop.description || prop.title || name}`);
+					lines.push(`  ${name}${opt}: ${propToTsType(prop)};`);
+				}
+				lines.push("}");
+				lines.push("");
+
+				lines.push("export interface ResponseActionOutput {");
+				for (const [name, prop] of Object.entries(outputProperties)) {
+					lines.push(`  ${name}?: ${propToTsType(prop)};`);
+				}
+				lines.push("}");
+
+				return `${lines.join("\n")}\n`;
+			}
+
+			function propToTsType(prop) {
+				if (prop.type === "number")  return "number";
+				if (prop.type === "boolean") return "boolean";
+				if (prop.type === "object") {
+					const subProps = prop.properties || {};
+					const inner = Object.entries(subProps)
+						.map(([k, v]) => `    ${k}?: ${propToTsType(v)};`)
+						.join("\n");
+					return inner ? `{\n${inner}\n  }` : "object";
+				}
+				return "string";
+			}
+
+			// ── Service file ───────────────────────────────────────────────────
+			function generateServiceFile({ typeName, dsName, apiVersion }) {
+				return `${headerComment()}
+
+import type { IOperationResult } from "@microsoft/power-apps/data";
+import { getClient } from "@microsoft/power-apps/data";
+import { dataSourcesInfo } from "../../../.power/schemas/appschemas/dataSourcesInfo";
+import type {
+\tManualTriggerInput,
+\tResponseActionOutput,
+} from "../models/${typeName}Model";
+
+//biome-ignore lint/complexity/noStaticOnlyClass: <wip>
+export class ${typeName}Service {
+\tprivate static readonly dataSourceName = "${dsName}";
+
+\tprivate static readonly client = getClient(dataSourcesInfo);
+
+\tpublic static async Run(
+\t\tinput: ManualTriggerInput,
+\t): Promise<IOperationResult<ResponseActionOutput>> {
+\t\tconst params: { input: ManualTriggerInput } = { input };
+\t\tconst allParams = { ...params, "api-version": "${apiVersion}" };
+\t\tconst result = await ${typeName}Service.client.executeAsync<
+\t\t\t{ input: ManualTriggerInput },
+\t\t\tResponseActionOutput
+\t\t>({
+\t\t\tconnectorOperation: {
+\t\t\t\ttableName: ${typeName}Service.dataSourceName,
+\t\t\t\toperationName: "Run",
+\t\t\t\tparameters: allParams,
+\t\t\t},
+\t\t});
+\t\treturn result;
+\t}
+}
+`;
+			}
+
+			// ── dataSourcesInfo entry ──────────────────────────────────────────
+			function generateDataSourcesEntry({ dsName, apiVersion }) {
+				return `// Merge this entry into the dataSourcesInfo object in
+// .power/schemas/appschemas/dataSourcesInfo.ts
+
+  "${dsName}": {
+    "tableId": "",
+    "version": "",
+    "primaryKey": "",
+    "dataSourceType": "Connector",
+    "apis": {
+      "Run": {
+        "path": "/{connectionId}/triggers/manual/run",
+        "method": "POST",
+        "parameters": [
+          { "name": "connectionId", "in": "path",  "required": true, "type": "string" },
+          { "name": "input",        "in": "body",   "required": true, "type": "object" },
+          { "name": "api-version",  "in": "query",  "required": true, "type": "string" }
+        ],
+        "responseInfo": {
+          "200":     { "type": "object" },
+          "default": { "type": "object" }
+        }
+      }
+    }
+  },`;
+			}
+
+			// ── power.config.json entry ────────────────────────────────────────
+			function generatePowerConfigEntry({ refId, dsName, displayName, workflowEntityId, workflowName }) {
+				const entry = {
+					id: "/providers/Microsoft.PowerApps/apis/shared_logicflows",
+					displayName: "Logic flows",
+					dataSources: [dsName],
+					workflowDetails: {
+						workflowEntityId,
+						workflowDisplayName: displayName,
+						workflowName,
+					},
+				};
+				return `// Merge this entry into "connectionReferences" in power.config.json
+
+  "${refId}": ${JSON.stringify(entry, null, 2).replace(/\n/g, "\n  ")}`;
+			}
+
+			// ── Rendering ──────────────────────────────────────────────────────
+			function renderFlowsList(flows) {
+				fileTreePanel.style.display = "none";
+				artifactList.replaceChildren();
+
+				if (flows.length === 0) {
+					const empty = document.createElement("div");
+					empty.className = "panel empty-state";
+					empty.textContent = "No solution-aware PowerApps-trigger flows found in this environment.";
+					artifactList.append(empty);
+					return;
+				}
+
+				const wrap = document.createElement("div");
+				wrap.className = "flows-table-wrap";
+
+				const table = document.createElement("table");
+				table.className = "flows-table";
+				table.innerHTML = `
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Status</th>
+							<th>Modified</th>
+							<th>Flow ID</th>
+							<th></th>
+						</tr>
+					</thead>
+				`;
+
+				const tbody = document.createElement("tbody");
+				for (const flow of flows) {
+					const tr = document.createElement("tr");
+					const status = flow.statecode === 1 ? "Stopped" : "Started";
+					const modifiedOn = flow.modifiedon
+						? new Date(flow.modifiedon).toLocaleDateString()
+						: "—";
+					const flowId = stripBraces(flow.workflowid);
+
+					tr.innerHTML = `
+						<td>${escapeHtml(flow.name || "—")}</td>
+						<td><span class="badge${flow.statecode === 1 ? " stopped" : ""}">${escapeHtml(status)}</span></td>
+						<td>${escapeHtml(modifiedOn)}</td>
+						<td style="font-family:monospace;font-size:12px">${escapeHtml(flowId)}</td>
+						<td><button type="button" class="use-btn" data-flow-id="${escapeAttr(flowId)}">Use this flow</button></td>
+					`;
+					tbody.append(tr);
+				}
+
+				table.append(tbody);
+				wrap.append(table);
+				artifactList.append(wrap);
+			}
+
+			function renderArtifacts(bundle) {
+				fileTreePanel.style.display = "";
+				fileTreePanel.open = false;
+				fileTree.innerHTML = renderFileTree(bundle.files);
+				artifactList.replaceChildren(
+					...bundle.files.map((file, index) => {
+						const card = document.createElement("article");
+						card.className = "artifact-card";
+
+						const head = document.createElement("div");
+						head.className = "artifact-head";
+
+						const path = document.createElement("p");
+						path.className = "file-path";
+						path.title = file.path;
+						path.textContent = file.path;
+
+						const copy = document.createElement("button");
+						copy.type = "button";
+						copy.className = "icon";
+						copy.dataset.copyIndex = String(index);
+						copy.title = "Copy file";
+						copy.setAttribute("aria-label", `Copy ${file.path}`);
+						copy.innerHTML =
+							'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="9" width="10" height="10" rx="2" stroke="currentColor" stroke-width="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2"></path></svg>';
+
+						const pre = document.createElement("pre");
+						const code = document.createElement("code");
+						code.textContent = file.content;
+						pre.append(code);
+
+						head.append(path, copy);
+						card.append(head, pre);
+						return card;
+					}),
+				);
+			}
+
+			function renderFileTree(files) {
+				const groups = new Map();
+				for (const file of files) {
+					const label = file.path.includes("←") ? file.path : file.path;
+					const parts = label.split("/");
+					const fileName = parts.pop();
+					const folder = parts.join("/") || ".";
+					if (!groups.has(folder)) groups.set(folder, []);
+					groups.get(folder).push(fileName);
+				}
+				return [...groups.entries()]
+					.sort(([l], [r]) => l.localeCompare(r))
+					.map(([folder, names]) => {
+						const filesHtml = names
+							.sort((l, r) => l.localeCompare(r))
+							.map((n) => `<div class="tree-file">${escapeHtml(n)}</div>`)
+							.join("");
+						return `<div class="tree-group"><div class="tree-folder">${escapeHtml(folder)}/</div>${filesHtml}</div>`;
+					})
+					.join("");
+			}
+
+			function renderError(message) {
+				fileTreePanel.style.display = "none";
+				artifactList.replaceChildren();
+				const panel = document.createElement("div");
+				panel.className = "panel empty-state error-text";
+				panel.textContent = message;
+				artifactList.append(panel);
+			}
+
+			// ── XRM / OData helpers ────────────────────────────────────────────
+			async function fetchAll(relativePath) {
+				const items = [];
+				let nextPath = relativePath;
+				while (nextPath) {
+					const data = await fetchOData(nextPath);
+					items.push(...(data.value || []));
+					nextPath = data["@odata.nextLink"] || "";
+				}
+				return items;
+			}
+
+			async function fetchOData(relativeOrAbsoluteUrl) {
+				const clientUrl = getClientUrl();
+				const url = relativeOrAbsoluteUrl.startsWith("http")
+					? relativeOrAbsoluteUrl
+					: `${clientUrl}/api/data/${API_VERSION}/${relativeOrAbsoluteUrl}`;
+
+				const response = await fetch(url, {
+					method: "GET",
+					headers: {
+						Accept: "application/json",
+						"OData-MaxVersion": "4.0",
+						"OData-Version": "4.0",
+					},
+					credentials: "same-origin",
+				});
+
+				if (!response.ok) {
+					const body = await response.text();
+					throw new Error(`GET ${url}\n\nHTTP ${response.status} ${response.statusText}\n${body}`);
+				}
+
+				return response.json();
+			}
+
+			function getClientUrl() {
+				const xrm = getXrm();
+				return xrm.Utility.getGlobalContext().getClientUrl().replace(/\/$/, "");
+			}
+
+			function getXrm() {
+				if (window.Xrm) return window.Xrm;
+				if (window.parent?.Xrm) return window.parent.Xrm;
+				if (window.opener?.Xrm) return window.opener.Xrm;
+				throw new Error(
+					"Xrm context was not found. Open this page inside a model-driven app web resource or a browser console with Xrm available.",
+				);
+			}
+
+			// ── String / UUID helpers ──────────────────────────────────────────
+			function toDataSourceName(displayName) {
+				return displayName.trim().toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 64);
+			}
+
+			function toTypeName(value) {
+				const safe = String(value || "Flow").replace(/[^a-zA-Z0-9_]/g, "_");
+				return `${safe.charAt(0).toUpperCase()}${safe.slice(1)}`;
+			}
+
+			function toTitle(value) {
+				return String(value)
+					.replace(/_/g, " ")
+					.replace(/\b\w/g, (l) => l.toUpperCase());
+			}
+
+			function stripBraces(value) {
+				return String(value || "").replace(/[{}]/g, "");
+			}
+
+			function generateUUID() {
+				return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+					const r = (Math.random() * 16) | 0;
+					return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+				});
+			}
+
+			function headerComment() {
+				return `/*!
+ * Copyright (C) Microsoft Corporation. All rights reserved.
+ * This file is autogenerated. Do not edit this file directly.
+ */`;
+			}
+
+			function escapeHtml(value) {
+				return String(value)
+					.replace(/&/g, "&amp;")
+					.replace(/</g, "&lt;")
+					.replace(/>/g, "&gt;")
+					.replace(/"/g, "&quot;");
+			}
+
+			function escapeAttr(value) {
+				return String(value).replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+			}
+
+			function downloadText(text, fileName, type) {
+				const blob = new Blob([text], { type });
+				const url = URL.createObjectURL(blob);
+				const a = document.createElement("a");
+				a.href = url; a.download = fileName; a.click();
+				URL.revokeObjectURL(url);
+			}
+
+			function showToast(message) {
+				toast.textContent = message;
+				toast.classList.add("visible");
+				window.clearTimeout(toastTimer);
+				toastTimer = window.setTimeout(() => toast.classList.remove("visible"), 1800);
+			}
+
+			function setBusy(isBusy) {
+				actionButton.disabled = isBusy;
+				if (!isBusy) syncMode(); // restore button text
+				else actionButton.textContent = getMode() === "list" ? "Listing…" : "Generating…";
+			}
+
+			function setStatus(message) { statusText.textContent = message; }
+			function getMode() { return document.querySelector("input[name='mode']:checked").value; }
+		</script>
+	</body>
+</html>
