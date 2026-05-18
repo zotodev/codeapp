@@ -11,9 +11,13 @@ import type {
 } from "@microsoft/power-apps/data/metadata/dataverse";
 import { dataSourcesInfo } from "../../../.power/schemas/appschemas/dataSourcesInfo";
 import type { IGetAllOptions, IGetOptions } from "../models/CommonModels";
-import type { Zap_orders, Zap_ordersBase } from "../models/Zap_ordersModel";
+import type {
+	Zap_orders,
+	Zap_ordersBase,
+	Zap_ordersUploadColumnName,
+} from "../models/Zap_ordersModel";
 
-//biome-ignore lint/complexity/noStaticOnlyClass: <wip
+//biome-ignore lint/complexity/noStaticOnlyClass: <wip>
 export class Zap_ordersService {
 	private static readonly dataSourceName = "zap_orders";
 
@@ -83,5 +87,23 @@ export class Zap_ordersService {
 				},
 			},
 		});
+	}
+
+	public static async upload(
+		id: string,
+		columnName: Zap_ordersUploadColumnName,
+		file: File,
+		fileDisplayName?: string,
+	): Promise<IOperationResult<void>> {
+		const arrayBuffer = await file.arrayBuffer();
+		const data = new Uint8Array(arrayBuffer);
+		const result = await Zap_ordersService.client.uploadFileToRecord(
+			Zap_ordersService.dataSourceName,
+			id,
+			columnName,
+			fileDisplayName || file.name,
+			data,
+		);
+		return result;
 	}
 }

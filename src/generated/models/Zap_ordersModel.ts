@@ -12,6 +12,16 @@ export const Zap_ordersstatuscode = {
   2: 'Inactive'
 } as const;
 export type Zap_ordersstatuscode = keyof typeof Zap_ordersstatuscode;
+export const Zap_orderszap_category = {
+  1: 'CAT1',
+  2: 'CAT2'
+} as const;
+export type Zap_orderszap_category = keyof typeof Zap_orderszap_category;
+export const Zap_orderszap_subcategory = {
+  11: 'SCAT1',
+  22: 'SCAT2'
+} as const;
+export type Zap_orderszap_subcategory = keyof typeof Zap_orderszap_subcategory;
 
 export interface Zap_ordersBase {
   importsequencenumber?: number;
@@ -23,8 +33,10 @@ export interface Zap_ordersBase {
   timezoneruleversionnumber?: number;
   utcconversiontimezonecode?: number;
   zap_address: string;
+  zap_category?: Zap_orderszap_category;
   zap_id?: string;
   zap_orderid: string;
+  zap_subcategory?: Zap_orderszap_subcategory;
 }
 
 export interface Zap_orders extends Zap_ordersBase {
@@ -44,6 +56,10 @@ export interface Zap_orders extends Zap_ordersBase {
   statecodename?: string;
   statuscodename?: string;
   versionnumber?: number;
+  zap_attachment?: string;
+  zap_attachment_name?: string;
+  zap_categoryname?: string;
+  zap_subcategoryname?: string;
   createdby?: object;
   _createdby_value?: string;
   createdonbehalfby?: object;
@@ -59,3 +75,4 @@ export interface Zap_orders extends Zap_ordersBase {
   owninguser?: object;
   _owninguser_value?: string;
 }
+export type Zap_ordersUploadColumnName = 'zap_attachment';

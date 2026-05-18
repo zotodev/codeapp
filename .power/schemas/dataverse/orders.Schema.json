@@ -225,9 +225,18 @@
           "x-ms-dataverse-type": "StateType",
           "x-ms-schema-name": "statecode",
           "required": true,
-          "enum": ["Active", "Inactive"],
-          "x-ms-enum-values": [0, 1],
-          "Color": [null, null],
+          "enum": [
+            "Active",
+            "Inactive"
+          ],
+          "x-ms-enum-values": [
+            0,
+            1
+          ],
+          "Color": [
+            null,
+            null
+          ],
           "x-ms-optionsetmetadataid": "7d635c02-9133-f111-88b3-7ced8daf459d",
           "x-ms-isGlobal": false,
           "x-ms-optionsetdisplayname": "Status",
@@ -247,9 +256,18 @@
           "x-ms-dataverse-attribute": "statuscode",
           "x-ms-dataverse-type": "StatusType",
           "x-ms-schema-name": "statuscode",
-          "enum": ["Active", "Inactive"],
-          "x-ms-enum-values": [1, 2],
-          "Color": [null, null],
+          "enum": [
+            "Active",
+            "Inactive"
+          ],
+          "x-ms-enum-values": [
+            1,
+            2
+          ],
+          "Color": [
+            null,
+            null
+          ],
           "x-ms-optionsetmetadataid": "89635c02-9133-f111-88b3-7ced8daf459d",
           "x-ms-isGlobal": false,
           "x-ms-optionsetdisplayname": "Status Reason",
@@ -294,6 +312,54 @@
           "required": true,
           "maxLength": 100
         },
+        "zap_attachment": {
+          "type": "string",
+          "title": "Attachment",
+          "x-ms-dataverse-attribute": "zap_attachment",
+          "x-ms-dataverse-type": "FileType",
+          "x-ms-schema-name": "zap_Attachment",
+          "x-ms-read-only": true
+        },
+        "zap_attachment_name": {
+          "type": "string",
+          "title": "zap_attachment_name",
+          "x-ms-dataverse-attribute": "zap_attachment_name",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "zap_Attachment_Name",
+          "x-ms-read-only": true,
+          "maxLength": 200
+        },
+        "zap_category": {
+          "type": "string",
+          "title": "Category",
+          "x-ms-dataverse-attribute": "zap_category",
+          "x-ms-dataverse-type": "PicklistType",
+          "x-ms-schema-name": "zap_Category",
+          "enum": [
+            "CAT1",
+            "CAT2"
+          ],
+          "x-ms-enum-values": [
+            1,
+            2
+          ],
+          "Color": [
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "75233d09-aa52-f111-bec7-000d3aca4dd6",
+          "x-ms-isGlobal": true,
+          "x-ms-optionsetdisplayname": "OrderCategory",
+          "x-ms-optionSetType": "Picklist"
+        },
+        "zap_categoryname": {
+          "type": "string",
+          "title": "zap_categoryname",
+          "x-ms-dataverse-attribute": "zap_categoryname",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "zap_categoryName",
+          "x-ms-read-only": true
+        },
         "zap_id": {
           "type": "string",
           "title": "ID",
@@ -312,6 +378,37 @@
           "x-ms-dataverse-primary-id": true,
           "required": true,
           "x-ms-keyType": "primary"
+        },
+        "zap_subcategory": {
+          "type": "string",
+          "title": "SubCategory",
+          "x-ms-dataverse-attribute": "zap_subcategory",
+          "x-ms-dataverse-type": "PicklistType",
+          "x-ms-schema-name": "zap_SubCategory",
+          "enum": [
+            "SCAT1",
+            "SCAT2"
+          ],
+          "x-ms-enum-values": [
+            11,
+            22
+          ],
+          "Color": [
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "9ddb8722-aa52-f111-bec7-000d3aca4dd6",
+          "x-ms-isGlobal": false,
+          "x-ms-optionsetdisplayname": "SubCategory",
+          "x-ms-optionSetType": "Picklist"
+        },
+        "zap_subcategoryname": {
+          "type": "string",
+          "title": "zap_subcategoryname",
+          "x-ms-dataverse-attribute": "zap_subcategoryname",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "zap_subcategoryName",
+          "x-ms-read-only": true
         }
       },
       "required": [
