@@ -1,3 +1,7 @@
+packages:
+  - packages/*
+  - packages/vendored/*
+
 allowBuilds:
   '@azure/msal-node-extensions': false
   '@azure/msal-node-runtime': false

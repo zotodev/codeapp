@@ -1,0 +1,41 @@
+{
+  "name": "zapp-sdk",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Custom Power Apps SDK (vendored from @microsoft/power-apps)",
+  "license": "See license in LICENSE file",
+  "exports": {
+    "./app": {
+      "types": "./dist/app/index.d.ts",
+      "default": "./dist/app/index.js"
+    },
+    "./data": {
+      "types": "./dist/data/index.d.ts",
+      "default": "./dist/data/index.js"
+    },
+    "./data/executors": {
+      "types": "./dist/data/executors/index.d.ts",
+      "default": "./dist/data/executors/index.js"
+    },
+    "./data/metadata/dataverse": {
+      "types": "./dist/data/metadata/dataverse/index.d.ts",
+      "default": "./dist/data/metadata/dataverse/index.js"
+    },
+    "./internal/data": {
+      "types": "./dist/internal/data/index.d.ts",
+      "default": "./dist/internal/data/index.js"
+    },
+    "./telemetry": {
+      "types": "./dist/telemetry/index.d.ts",
+      "default": "./dist/telemetry/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  }
+}

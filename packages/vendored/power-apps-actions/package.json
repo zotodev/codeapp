@@ -1,0 +1,30 @@
+{
+  "name": "@microsoft/power-apps-actions",
+  "version": "1.5.0",
+  "type": "module",
+  "description": "Vendored Power Apps developer actions",
+  "license": "See license in LICENSE file",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "@microsoft/power-apps-common": "workspace:*",
+    "prettier": "3.8.1",
+    "sax": "1.4.1",
+    "ts-morph": "27.0.2",
+    "zod": "3.24.4",
+    "zod-to-json-schema": "3.24.5"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

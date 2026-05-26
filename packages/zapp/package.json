@@ -1,0 +1,30 @@
+{
+  "name": "zapp",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Custom Power Apps CLI (vendored from @microsoft/power-apps-cli)",
+  "license": "See license in LICENSE file",
+  "bin": {
+    "zapp": "./dist/Bin.js"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "dependencies": {
+    "@azure/msal-node": "3.6.3",
+    "@azure/msal-node-extensions": "1.5.17",
+    "@clack/prompts": "0.6.3",
+    "@microsoft/1ds-core-js": "4.3.11",
+    "@microsoft/1ds-post-js": "4.3.11",
+    "@microsoft/power-apps-actions": "workspace:*",
+    "@microsoft/power-apps-common": "workspace:*",
+    "chalk": "4.1.2",
+    "commander": "10.0.1",
+    "open": "8.4.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
