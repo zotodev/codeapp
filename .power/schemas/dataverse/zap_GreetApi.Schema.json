@@ -1,0 +1,43 @@
+{
+  "name": "zap_GreetApi",
+  "title": "zap_GreetApi",
+  "type": "Microsoft.PowerApps/dataverseOperation",
+  "properties": {
+    "displayName": "zap_GreetApi",
+    "swagger": {
+      "swagger": "2.0",
+      "info": {
+        "title": "zap_GreetApi",
+        "version": "1.0"
+      },
+      "basePath": "/api/data/v9.2",
+      "paths": {
+        "/zap_GreetApi": {
+          "post": {
+            "operationId": "zap_GreetApi",
+            "parameters": [
+              {
+                "name": "zap_name",
+                "in": "body",
+                "required": true,
+                "type": "string",
+                "x-ms-dataverse-type": "StringType",
+                "x-ms-csdl-type": "Edm.String"
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "schema": {
+                  "type": "object",
+                  "x-ms-dataverse-type": "LookupType",
+                  "x-ms-csdl-type": "mscrm.zap_GreetApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

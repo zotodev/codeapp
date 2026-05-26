@@ -1,6 +1,6 @@
 "use client";
 
-import { ClipboardListIcon, WorkflowIcon } from "lucide-react";
+import { ClipboardListIcon, PlugIcon, WorkflowIcon } from "lucide-react";
 import type * as React from "react";
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
@@ -51,6 +51,21 @@ const data = {
 				{
 					title: "Get API submission",
 					url: "/cloud-flow",
+				},
+			],
+		},
+		{
+			title: "Custom API",
+			url: "#",
+			icon: <PlugIcon />,
+			items: [
+				{
+					title: "Greet API",
+					url: "/custom-api",
+				},
+				{
+					title: "Test Action",
+					url: "/custom-api/test-action",
 				},
 			],
 		},

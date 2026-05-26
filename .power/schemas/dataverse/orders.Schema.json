@@ -360,6 +360,23 @@
           "x-ms-schema-name": "zap_categoryName",
           "x-ms-read-only": true
         },
+        "zap_file": {
+          "type": "string",
+          "title": "File",
+          "x-ms-dataverse-attribute": "zap_file",
+          "x-ms-dataverse-type": "FileType",
+          "x-ms-schema-name": "zap_File",
+          "x-ms-read-only": true
+        },
+        "zap_file_name": {
+          "type": "string",
+          "title": "zap_file_name",
+          "x-ms-dataverse-attribute": "zap_file_name",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "zap_File_Name",
+          "x-ms-read-only": true,
+          "maxLength": 200
+        },
         "zap_id": {
           "type": "string",
           "title": "ID",

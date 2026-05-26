@@ -33,6 +33,16 @@
         "cloudflowcalls": {
           "entitySetName": "zap_cloudflowcalls",
           "logicalName": "zap_cloudflowcall"
+        },
+        "cloudflowruns": {
+          "entitySetName": "zap_cloudflowruns",
+          "logicalName": "zap_cloudflowrun",
+          "isHidden": false
+        },
+        "environment_39a902ba": {
+          "entitySetName": "Environment",
+          "logicalName": "environment_39a902ba",
+          "isHidden": false
         }
       },
       "environmentVariableName": ""

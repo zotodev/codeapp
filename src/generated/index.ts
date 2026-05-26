@@ -6,10 +6,16 @@
 // Models
 export * as CommonModels from './models/CommonModels';
 export * as GetAPISubmissionDataModel from './models/GetAPISubmissionDataModel';
+export * as Zap_GreetApiModel from './models/Zap_GreetApiModel';
+export * as Zap_TestActionModel from './models/Zap_TestActionModel';
 export * as Zap_cloudflowcallsModel from './models/Zap_cloudflowcallsModel';
+export * as Zap_cloudflowrunsModel from './models/Zap_cloudflowrunsModel';
 export * as Zap_ordersModel from './models/Zap_ordersModel';
 
 // Services
 export * from './services/GetAPISubmissionDataService';
+export * from './services/Zap_GreetApiService';
+export * from './services/Zap_TestActionService';
 export * from './services/Zap_cloudflowcallsService';
+export * from './services/Zap_cloudflowrunsService';
 export * from './services/Zap_ordersService';

@@ -12,11 +12,13 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TabIndexRouteImport } from './routes/tab/index'
 import { Route as OrdersIndexRouteImport } from './routes/orders/index'
+import { Route as CustomApiIndexRouteImport } from './routes/custom-api/index'
 import { Route as CloudFlowIndexRouteImport } from './routes/cloud-flow/index'
 import { Route as ApiIndexRouteImport } from './routes/api/index'
 import { Route as OrdersListRouteImport } from './routes/orders/list'
 import { Route as OrdersCreateRouteImport } from './routes/orders/create'
 import { Route as OrdersOrderIdRouteImport } from './routes/orders/$orderId'
+import { Route as CustomApiTestActionRouteImport } from './routes/custom-api/test-action'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -31,6 +33,11 @@ const TabIndexRoute = TabIndexRouteImport.update({
 const OrdersIndexRoute = OrdersIndexRouteImport.update({
   id: '/orders/',
   path: '/orders/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CustomApiIndexRoute = CustomApiIndexRouteImport.update({
+  id: '/custom-api/',
+  path: '/custom-api/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CloudFlowIndexRoute = CloudFlowIndexRouteImport.update({
@@ -58,35 +65,46 @@ const OrdersOrderIdRoute = OrdersOrderIdRouteImport.update({
   path: '/orders/$orderId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CustomApiTestActionRoute = CustomApiTestActionRouteImport.update({
+  id: '/custom-api/test-action',
+  path: '/custom-api/test-action',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/custom-api/test-action': typeof CustomApiTestActionRoute
   '/orders/$orderId': typeof OrdersOrderIdRoute
   '/orders/create': typeof OrdersCreateRoute
   '/orders/list': typeof OrdersListRoute
   '/api/': typeof ApiIndexRoute
   '/cloud-flow/': typeof CloudFlowIndexRoute
+  '/custom-api/': typeof CustomApiIndexRoute
   '/orders/': typeof OrdersIndexRoute
   '/tab/': typeof TabIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/custom-api/test-action': typeof CustomApiTestActionRoute
   '/orders/$orderId': typeof OrdersOrderIdRoute
   '/orders/create': typeof OrdersCreateRoute
   '/orders/list': typeof OrdersListRoute
   '/api': typeof ApiIndexRoute
   '/cloud-flow': typeof CloudFlowIndexRoute
+  '/custom-api': typeof CustomApiIndexRoute
   '/orders': typeof OrdersIndexRoute
   '/tab': typeof TabIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/custom-api/test-action': typeof CustomApiTestActionRoute
   '/orders/$orderId': typeof OrdersOrderIdRoute
   '/orders/create': typeof OrdersCreateRoute
   '/orders/list': typeof OrdersListRoute
   '/api/': typeof ApiIndexRoute
   '/cloud-flow/': typeof CloudFlowIndexRoute
+  '/custom-api/': typeof CustomApiIndexRoute
   '/orders/': typeof OrdersIndexRoute
   '/tab/': typeof TabIndexRoute
 }
@@ -94,42 +112,50 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/custom-api/test-action'
     | '/orders/$orderId'
     | '/orders/create'
     | '/orders/list'
     | '/api/'
     | '/cloud-flow/'
+    | '/custom-api/'
     | '/orders/'
     | '/tab/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/custom-api/test-action'
     | '/orders/$orderId'
     | '/orders/create'
     | '/orders/list'
     | '/api'
     | '/cloud-flow'
+    | '/custom-api'
     | '/orders'
     | '/tab'
   id:
     | '__root__'
     | '/'
+    | '/custom-api/test-action'
     | '/orders/$orderId'
     | '/orders/create'
     | '/orders/list'
     | '/api/'
     | '/cloud-flow/'
+    | '/custom-api/'
     | '/orders/'
     | '/tab/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CustomApiTestActionRoute: typeof CustomApiTestActionRoute
   OrdersOrderIdRoute: typeof OrdersOrderIdRoute
   OrdersCreateRoute: typeof OrdersCreateRoute
   OrdersListRoute: typeof OrdersListRoute
   ApiIndexRoute: typeof ApiIndexRoute
   CloudFlowIndexRoute: typeof CloudFlowIndexRoute
+  CustomApiIndexRoute: typeof CustomApiIndexRoute
   OrdersIndexRoute: typeof OrdersIndexRoute
   TabIndexRoute: typeof TabIndexRoute
 }
@@ -155,6 +181,13 @@ declare module '@tanstack/react-router' {
       path: '/orders'
       fullPath: '/orders/'
       preLoaderRoute: typeof OrdersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/custom-api/': {
+      id: '/custom-api/'
+      path: '/custom-api'
+      fullPath: '/custom-api/'
+      preLoaderRoute: typeof CustomApiIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cloud-flow/': {
@@ -192,16 +225,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrdersOrderIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/custom-api/test-action': {
+      id: '/custom-api/test-action'
+      path: '/custom-api/test-action'
+      fullPath: '/custom-api/test-action'
+      preLoaderRoute: typeof CustomApiTestActionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CustomApiTestActionRoute: CustomApiTestActionRoute,
   OrdersOrderIdRoute: OrdersOrderIdRoute,
   OrdersCreateRoute: OrdersCreateRoute,
   OrdersListRoute: OrdersListRoute,
   ApiIndexRoute: ApiIndexRoute,
   CloudFlowIndexRoute: CloudFlowIndexRoute,
+  CustomApiIndexRoute: CustomApiIndexRoute,
   OrdersIndexRoute: OrdersIndexRoute,
   TabIndexRoute: TabIndexRoute,
 }
