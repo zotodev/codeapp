@@ -174,74 +174,12 @@ importers:
       zapp:
         specifier: workspace:*
         version: link:packages/zapp
-      zapp-sdk:
-        specifier: workspace:*
-        version: link:packages/zapp-sdk
-
-  packages/vendored/power-apps-actions:
-    dependencies:
-      '@microsoft/power-apps-common':
-        specifier: workspace:*
-        version: link:../power-apps-common
-      prettier:
-        specifier: 3.8.1
-        version: 3.8.1
-      sax:
-        specifier: 1.4.1
-        version: 1.4.1
-      ts-morph:
-        specifier: 27.0.2
-        version: 27.0.2
-      zod:
-        specifier: 3.24.4
-        version: 3.24.4
-      zod-to-json-schema:
-        specifier: 3.24.5
-        version: 3.24.5(zod@3.24.4)
-
-  packages/vendored/power-apps-common:
-    dependencies:
-      '@microsoft/1ds-core-js':
-        specifier: 4.3.11
-        version: 4.3.11(tslib@2.8.1)
-      '@microsoft/1ds-post-js':
-        specifier: 4.3.11
-        version: 4.3.11(tslib@2.8.1)
 
   packages/zapp:
     dependencies:
-      '@azure/msal-node':
-        specifier: 3.6.3
-        version: 3.6.3
-      '@azure/msal-node-extensions':
-        specifier: 1.5.17
-        version: 1.5.17
-      '@clack/prompts':
-        specifier: 0.6.3
-        version: 0.6.3
-      '@microsoft/1ds-core-js':
-        specifier: 4.3.11
-        version: 4.3.11(tslib@2.8.1)
-      '@microsoft/1ds-post-js':
-        specifier: 4.3.11
-        version: 4.3.11(tslib@2.8.1)
-      '@microsoft/power-apps-actions':
-        specifier: workspace:*
-        version: link:../vendored/power-apps-actions
-      '@microsoft/power-apps-common':
-        specifier: workspace:*
-        version: link:../vendored/power-apps-common
-      chalk:
-        specifier: 4.1.2
-        version: 4.1.2
-      commander:
-        specifier: 10.0.1
-        version: 10.0.1
-      open:
-        specifier: 8.4.0
-        version: 8.4.0
-
-  packages/zapp-sdk: {}
+      '@microsoft/power-apps-cli':
+        specifier: 0.11.0
+        version: 0.11.0(tslib@2.8.1)
 
 packages:
 
@@ -4721,9 +4659,9 @@ snapshots:
     dependencies:
       '@nevware21/ts-utils': 0.14.0
 
-  '@microsoft/power-apps-actions@1.5.0(@microsoft/1ds-core-js@4.3.11)(@microsoft/1ds-post-js@4.3.11)':
+  '@microsoft/power-apps-actions@1.5.0(@microsoft/1ds-core-js@4.3.11(tslib@2.8.1))(@microsoft/1ds-post-js@4.3.11(tslib@2.8.1))':
     dependencies:
-      '@microsoft/power-apps-common': 1.1.1(@microsoft/1ds-core-js@4.3.11)(@microsoft/1ds-post-js@4.3.11)
+      '@microsoft/power-apps-common': 1.1.1(@microsoft/1ds-core-js@4.3.11(tslib@2.8.1))(@microsoft/1ds-post-js@4.3.11(tslib@2.8.1))
       prettier: 3.8.1
       sax: 1.4.1
       ts-morph: 27.0.2
@@ -4733,22 +4671,22 @@ snapshots:
       - '@microsoft/1ds-core-js'
       - '@microsoft/1ds-post-js'
 
-  '@microsoft/power-apps-cli@0.11.0':
+  '@microsoft/power-apps-cli@0.11.0(tslib@2.8.1)':
     dependencies:
       '@azure/msal-node': 3.6.3
       '@azure/msal-node-extensions': 1.5.17
       '@clack/prompts': 0.6.3
       '@microsoft/1ds-core-js': 4.3.11(tslib@2.8.1)
       '@microsoft/1ds-post-js': 4.3.11(tslib@2.8.1)
-      '@microsoft/power-apps-actions': 1.5.0(@microsoft/1ds-core-js@4.3.11)(@microsoft/1ds-post-js@4.3.11)
-      '@microsoft/power-apps-common': 1.1.1(@microsoft/1ds-core-js@4.3.11)(@microsoft/1ds-post-js@4.3.11)
+      '@microsoft/power-apps-actions': 1.5.0(@microsoft/1ds-core-js@4.3.11(tslib@2.8.1))(@microsoft/1ds-post-js@4.3.11(tslib@2.8.1))
+      '@microsoft/power-apps-common': 1.1.1(@microsoft/1ds-core-js@4.3.11(tslib@2.8.1))(@microsoft/1ds-post-js@4.3.11(tslib@2.8.1))
       chalk: 4.1.2
       commander: 10.0.1
       open: 8.4.0
     transitivePeerDependencies:
       - tslib
 
-  '@microsoft/power-apps-common@1.1.1(@microsoft/1ds-core-js@4.3.11)(@microsoft/1ds-post-js@4.3.11)':
+  '@microsoft/power-apps-common@1.1.1(@microsoft/1ds-core-js@4.3.11(tslib@2.8.1))(@microsoft/1ds-post-js@4.3.11(tslib@2.8.1))':
     optionalDependencies:
       '@microsoft/1ds-core-js': 4.3.11(tslib@2.8.1)
       '@microsoft/1ds-post-js': 4.3.11(tslib@2.8.1)
@@ -4760,7 +4698,7 @@ snapshots:
 
   '@microsoft/power-apps@1.1.3':
     dependencies:
-      '@microsoft/power-apps-cli': 0.11.0
+      '@microsoft/power-apps-cli': 0.11.0(tslib@2.8.1)
     transitivePeerDependencies:
       - tslib
 
