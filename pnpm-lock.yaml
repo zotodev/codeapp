@@ -26,9 +26,12 @@ importers:
       '@fontsource-variable/geist':
         specifier: ^5.2.8
         version: 5.2.9
+      '@microsoft/applicationinsights-web':
+        specifier: ^3.4.3
+        version: 3.4.3(tslib@2.8.1)
       '@microsoft/power-apps':
         specifier: ^1.0.3
-        version: 1.1.3
+        version: 1.1.3(tslib@2.8.1)
       '@radix-ui/react-direction':
         specifier: ^1.1.1
         version: 1.1.1(@types/react@19.2.15)(react@19.2.6)
@@ -714,13 +717,48 @@ packages:
   '@microsoft/1ds-post-js@4.3.11':
     resolution: {integrity: sha512-V0ZeeALy/Pj8HWgNHDsK+yDeCYnJ9bCgTWhcrna/ZiAT+sGfWs6mDBjAVcG03uP7TDjdWLf8w79lgbXJ3+s3DA==}
 
+  '@microsoft/applicationinsights-analytics-js@3.4.3':
+    resolution: {integrity: sha512-yBr15AsqePtlmDXqDUPVUCNNbcFTDjAU10AdSpI6VcVt74zHxoW5Q0Ip9K4R7uEQ8W4vJR+CA598TVAhE0LgMA==}
+    peerDependencies:
+      tslib: '>= 1.0.0'
+
+  '@microsoft/applicationinsights-cfgsync-js@3.4.3':
+    resolution: {integrity: sha512-IA0puIUsScpHWMDpjeElE3ZO6XtezzzSZavI2uNpPtco4/mbFXxN/VyRa0CxFHFT9E2wtly5YFm++eX7iBG7Jg==}
+    peerDependencies:
+      tslib: '>= 1.0.0'
+
+  '@microsoft/applicationinsights-channel-js@3.4.3':
+    resolution: {integrity: sha512-9EeGdGkpgmTH0UEAn9AwbSGfEAdPK1GQdZ1vmbsy+H4t01oFgW4drteykVvYUcXnNHNIjo4mI8hhN6taou5Ogg==}
+    peerDependencies:
+      tslib: '>= 1.0.0'
+
   '@microsoft/applicationinsights-core-js@3.3.11':
     resolution: {integrity: sha512-WlBY1sKDNL62T++NifgFCyDuOoNUNrVILfnHubOzgU/od7MFEQYWU8EZyDcBC/+Z8e3TD6jfixurYtWoUC+6Eg==}
     peerDependencies:
       tslib: '>= 1.0.0'
 
+  '@microsoft/applicationinsights-core-js@3.4.3':
+    resolution: {integrity: sha512-A+wkMLodF4JJsLoEvovgF3jyhKhbh9FNzO97sM7KQkbWUzdK47z4V/NDIETgwbaxw1O1u8mnP2qnp/2Bj9A0Uw==}
+    peerDependencies:
+      tslib: '>= 1.0.0'
+
+  '@microsoft/applicationinsights-dependencies-js@3.4.3':
+    resolution: {integrity: sha512-1ZWWZ7h4uUs0Ir3n5GorRvrCEa3RkLc3MLJXcizxXgtPeICdcICmbokuG+CKM7s9ieOdlHG5Vf/X6sGlVlZygw==}
+    peerDependencies:
+      tslib: '>= 1.0.0'
+
+  '@microsoft/applicationinsights-properties-js@3.4.3':
+    resolution: {integrity: sha512-twEfOf4Ky/cQx+EH0V6zuFbgK//MMqS9twn85xMEN/2LUZ7Ugoln07sRMMoElkjqNrCNFTf+efEzJX/IwnL2Rw==}
+    peerDependencies:
+      tslib: '>= 1.0.0'
+
   '@microsoft/applicationinsights-shims@3.0.1':
     resolution: {integrity: sha512-DKwboF47H1nb33rSUfjqI6ryX29v+2QWcTrRvcQDA32AZr5Ilkr7whOOSsD1aBzwqX0RJEIP1Z81jfE3NBm/Lg==}
+
+  '@microsoft/applicationinsights-web@3.4.3':
+    resolution: {integrity: sha512-YoTXfma0VIL753BTuhikElkIEu2ZrTaGWslYVd5U5hEdzl7zrCvMik4FpEt2lY0q0GJjjFgqMcNoGWJG+9VKGQ==}
+    peerDependencies:
+      tslib: '>= 1.0.0'
 
   '@microsoft/dynamicproto-js@2.0.3':
     resolution: {integrity: sha512-JTWTU80rMy3mdxOjjpaiDQsTLZ6YSGGqsjURsY6AUQtIj0udlF/jYmhdLZu8693ZIC0T1IwYnFa0+QeiMnziBA==}
@@ -4643,6 +4681,32 @@ snapshots:
     transitivePeerDependencies:
       - tslib
 
+  '@microsoft/applicationinsights-analytics-js@3.4.3(tslib@2.8.1)':
+    dependencies:
+      '@microsoft/applicationinsights-core-js': 3.4.3(tslib@2.8.1)
+      '@microsoft/applicationinsights-shims': 3.0.1
+      '@microsoft/dynamicproto-js': 2.0.3
+      '@nevware21/ts-utils': 0.14.0
+      tslib: 2.8.1
+
+  '@microsoft/applicationinsights-cfgsync-js@3.4.3(tslib@2.8.1)':
+    dependencies:
+      '@microsoft/applicationinsights-core-js': 3.4.3(tslib@2.8.1)
+      '@microsoft/applicationinsights-shims': 3.0.1
+      '@microsoft/dynamicproto-js': 2.0.3
+      '@nevware21/ts-async': 0.5.5
+      '@nevware21/ts-utils': 0.14.0
+      tslib: 2.8.1
+
+  '@microsoft/applicationinsights-channel-js@3.4.3(tslib@2.8.1)':
+    dependencies:
+      '@microsoft/applicationinsights-core-js': 3.4.3(tslib@2.8.1)
+      '@microsoft/applicationinsights-shims': 3.0.1
+      '@microsoft/dynamicproto-js': 2.0.3
+      '@nevware21/ts-async': 0.5.5
+      '@nevware21/ts-utils': 0.14.0
+      tslib: 2.8.1
+
   '@microsoft/applicationinsights-core-js@3.3.11(tslib@2.8.1)':
     dependencies:
       '@microsoft/applicationinsights-shims': 3.0.1
@@ -4651,9 +4715,48 @@ snapshots:
       '@nevware21/ts-utils': 0.14.0
       tslib: 2.8.1
 
+  '@microsoft/applicationinsights-core-js@3.4.3(tslib@2.8.1)':
+    dependencies:
+      '@microsoft/applicationinsights-shims': 3.0.1
+      '@microsoft/dynamicproto-js': 2.0.3
+      '@nevware21/ts-async': 0.5.5
+      '@nevware21/ts-utils': 0.14.0
+      tslib: 2.8.1
+
+  '@microsoft/applicationinsights-dependencies-js@3.4.3(tslib@2.8.1)':
+    dependencies:
+      '@microsoft/applicationinsights-core-js': 3.4.3(tslib@2.8.1)
+      '@microsoft/applicationinsights-shims': 3.0.1
+      '@microsoft/dynamicproto-js': 2.0.3
+      '@nevware21/ts-async': 0.5.5
+      '@nevware21/ts-utils': 0.14.0
+      tslib: 2.8.1
+
+  '@microsoft/applicationinsights-properties-js@3.4.3(tslib@2.8.1)':
+    dependencies:
+      '@microsoft/applicationinsights-core-js': 3.4.3(tslib@2.8.1)
+      '@microsoft/applicationinsights-shims': 3.0.1
+      '@microsoft/dynamicproto-js': 2.0.3
+      '@nevware21/ts-utils': 0.14.0
+      tslib: 2.8.1
+
   '@microsoft/applicationinsights-shims@3.0.1':
     dependencies:
       '@nevware21/ts-utils': 0.14.0
+
+  '@microsoft/applicationinsights-web@3.4.3(tslib@2.8.1)':
+    dependencies:
+      '@microsoft/applicationinsights-analytics-js': 3.4.3(tslib@2.8.1)
+      '@microsoft/applicationinsights-cfgsync-js': 3.4.3(tslib@2.8.1)
+      '@microsoft/applicationinsights-channel-js': 3.4.3(tslib@2.8.1)
+      '@microsoft/applicationinsights-core-js': 3.4.3(tslib@2.8.1)
+      '@microsoft/applicationinsights-dependencies-js': 3.4.3(tslib@2.8.1)
+      '@microsoft/applicationinsights-properties-js': 3.4.3(tslib@2.8.1)
+      '@microsoft/applicationinsights-shims': 3.0.1
+      '@microsoft/dynamicproto-js': 2.0.3
+      '@nevware21/ts-async': 0.5.5
+      '@nevware21/ts-utils': 0.14.0
+      tslib: 2.8.1
 
   '@microsoft/dynamicproto-js@2.0.3':
     dependencies:
@@ -4696,7 +4799,7 @@ snapshots:
       picocolors: 1.1.1
       vite: 7.3.3(@types/node@24.12.4)(jiti@2.7.0)(lightningcss@1.32.0)
 
-  '@microsoft/power-apps@1.1.3':
+  '@microsoft/power-apps@1.1.3(tslib@2.8.1)':
     dependencies:
       '@microsoft/power-apps-cli': 0.11.0(tslib@2.8.1)
     transitivePeerDependencies:

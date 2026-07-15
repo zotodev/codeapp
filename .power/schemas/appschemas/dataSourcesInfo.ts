@@ -19,6 +19,13 @@ export const dataSourcesInfo = {
     "dataSourceType": "Dataverse",
     "apis": {}
   },
+  "environmentvariablevalues": {
+    "tableId": "",
+    "version": "",
+    "primaryKey": "environmentvariablevalueid",
+    "dataSourceType": "Dataverse",
+    "apis": {}
+  },
   "zap_orders": {
     "tableId": "",
     "version": "",
