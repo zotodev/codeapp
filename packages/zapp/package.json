@@ -1,0 +1,20 @@
+{
+  "name": "zapp",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Power Apps CLI alias for environments where npx power-apps is unavailable.",
+  "license": "UNLICENSED",
+  "bin": {
+    "zapp": "./bin/zapp.js"
+  },
+  "files": [
+    "bin",
+    "README.md"
+  ],
+  "dependencies": {
+    "@microsoft/power-apps-cli": "0.11.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

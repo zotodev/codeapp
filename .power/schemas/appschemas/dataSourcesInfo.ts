@@ -12,12 +12,76 @@ export const dataSourcesInfo = {
     "dataSourceType": "Dataverse",
     "apis": {}
   },
+  "zap_cloudflowruns": {
+    "tableId": "",
+    "version": "",
+    "primaryKey": "zap_cloudflowrunid",
+    "dataSourceType": "Dataverse",
+    "apis": {}
+  },
+  "environmentvariablevalues": {
+    "tableId": "",
+    "version": "",
+    "primaryKey": "environmentvariablevalueid",
+    "dataSourceType": "Dataverse",
+    "apis": {}
+  },
   "zap_orders": {
     "tableId": "",
     "version": "",
     "primaryKey": "zap_orderid",
     "dataSourceType": "Dataverse",
     "apis": {}
+  },
+  "zap_greetapi": {
+    "tableId": "",
+    "version": "",
+    "primaryKey": "",
+    "dataSourceType": "Dataverse",
+    "apis": {
+      "zap_GreetApi": {
+        "path": "/api/data/v9.2/zap_GreetApi",
+        "method": "POST",
+        "parameters": [
+          {
+            "name": "zap_name",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  },
+  "zap_testaction": {
+    "tableId": "",
+    "version": "",
+    "primaryKey": "",
+    "dataSourceType": "Dataverse",
+    "apis": {
+      "zap_TestAction": {
+        "path": "/api/data/v9.2/zap_TestAction",
+        "method": "POST",
+        "parameters": [
+          {
+            "name": "Input",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "object"
+          }
+        }
+      }
+    }
   },
   "getapisubmissiondata": {
     "tableId": "",

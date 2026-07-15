@@ -59,6 +59,8 @@ export interface Zap_orders extends Zap_ordersBase {
   zap_attachment?: string;
   zap_attachment_name?: string;
   zap_categoryname?: string;
+  zap_file?: string;
+  zap_file_name?: string;
   zap_subcategoryname?: string;
   createdby?: object;
   _createdby_value?: string;
@@ -75,4 +77,4 @@ export interface Zap_orders extends Zap_ordersBase {
   owninguser?: object;
   _owninguser_value?: string;
 }
-export type Zap_ordersUploadColumnName = 'zap_attachment';
+export type Zap_ordersUploadColumnName = 'zap_attachment' | 'zap_file';

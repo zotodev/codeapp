@@ -1,0 +1,43 @@
+{
+  "name": "zap_TestAction",
+  "title": "zap_TestAction",
+  "type": "Microsoft.PowerApps/dataverseOperation",
+  "properties": {
+    "displayName": "zap_TestAction",
+    "swagger": {
+      "swagger": "2.0",
+      "info": {
+        "title": "zap_TestAction",
+        "version": "1.0"
+      },
+      "basePath": "/api/data/v9.2",
+      "paths": {
+        "/zap_TestAction": {
+          "post": {
+            "operationId": "zap_TestAction",
+            "parameters": [
+              {
+                "name": "Input",
+                "in": "body",
+                "required": true,
+                "type": "string",
+                "x-ms-dataverse-type": "StringType",
+                "x-ms-csdl-type": "Edm.String"
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "schema": {
+                  "type": "object",
+                  "x-ms-dataverse-type": "LookupType",
+                  "x-ms-csdl-type": "mscrm.zap_TestActionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
