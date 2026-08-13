@@ -1,6 +1,6 @@
 "use client";
 
-import { ClipboardListIcon } from "lucide-react";
+import { ClipboardListIcon, RefreshCwIcon } from "lucide-react";
 import type * as React from "react";
 import { NavMain } from "@/components/nav-main";
 import {
@@ -16,6 +16,11 @@ const data = {
       title: "Orders",
       url: "/orders",
       icon: <ClipboardListIcon />,
+    },
+    {
+      title: "Polling",
+      url: "/polling",
+      icon: <RefreshCwIcon />,
     },
   ],
 };

@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PollingRouteImport } from './routes/polling'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OrdersIndexRouteImport } from './routes/orders/index'
 import { Route as OrdersListRouteImport } from './routes/orders/list'
 import { Route as OrdersCreateRouteImport } from './routes/orders/create'
 import { Route as OrdersOrderIdIndexRouteImport } from './routes/orders/$orderId/index'
 
+const PollingRoute = PollingRouteImport.update({
+  id: '/polling',
+  path: '/polling',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -43,6 +49,7 @@ const OrdersOrderIdIndexRoute = OrdersOrderIdIndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/polling': typeof PollingRoute
   '/orders/create': typeof OrdersCreateRoute
   '/orders/list': typeof OrdersListRoute
   '/orders/': typeof OrdersIndexRoute
@@ -50,6 +57,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/polling': typeof PollingRoute
   '/orders/create': typeof OrdersCreateRoute
   '/orders/list': typeof OrdersListRoute
   '/orders': typeof OrdersIndexRoute
@@ -58,6 +66,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/polling': typeof PollingRoute
   '/orders/create': typeof OrdersCreateRoute
   '/orders/list': typeof OrdersListRoute
   '/orders/': typeof OrdersIndexRoute
@@ -67,15 +76,23 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/polling'
     | '/orders/create'
     | '/orders/list'
     | '/orders/'
     | '/orders/$orderId/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/orders/create' | '/orders/list' | '/orders' | '/orders/$orderId'
+  to:
+    | '/'
+    | '/polling'
+    | '/orders/create'
+    | '/orders/list'
+    | '/orders'
+    | '/orders/$orderId'
   id:
     | '__root__'
     | '/'
+    | '/polling'
     | '/orders/create'
     | '/orders/list'
     | '/orders/'
@@ -84,6 +101,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PollingRoute: typeof PollingRoute
   OrdersCreateRoute: typeof OrdersCreateRoute
   OrdersListRoute: typeof OrdersListRoute
   OrdersIndexRoute: typeof OrdersIndexRoute
@@ -92,6 +110,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/polling': {
+      id: '/polling'
+      path: '/polling'
+      fullPath: '/polling'
+      preLoaderRoute: typeof PollingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -132,6 +157,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PollingRoute: PollingRoute,
   OrdersCreateRoute: OrdersCreateRoute,
   OrdersListRoute: OrdersListRoute,
   OrdersIndexRoute: OrdersIndexRoute,
