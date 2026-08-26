@@ -39,6 +39,7 @@ Open Claude Code or GitHub Copilot in any folder and run the following commands:
 | `/add-azuredevops`  | Add Azure DevOps connector                                   |
 | `/add-connector`    | Add any other Power Platform connector                       |
 | `/add-datasource`   | Ask your copilot to recommend the right data source          |
+| `/power-plugin`     | Build Dataverse C# plug-ins exposed as Custom APIs            |
 
 Start with `/create-code-app` — it walks you through everything.
 

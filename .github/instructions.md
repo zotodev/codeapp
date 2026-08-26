@@ -61,6 +61,8 @@ skills/
     SKILL.md                      <- Add Office 365 Outlook connector
   add-mcscopilot/
     SKILL.md                      <- Add Copilot Studio agent connector
+  power-plugin/
+    SKILL.md                      <- Build Dataverse C# plug-ins exposed as Custom APIs
 ```
 
 ## Skills
@@ -80,6 +82,7 @@ skills/
 | `/add-office365` | Add Office 365 Outlook connector |
 | `/add-mcscopilot` | Add Copilot Studio agent connector |
 | `/add-connector` | Add any other Power Platform connector |
+| `/power-plugin` | Build Dataverse C# plug-ins exposed as Custom APIs for server-side rules |
 
 ## Key Concepts
 
